@@ -1,0 +1,15 @@
+node_modules
+supabase/.env
+supabase/.temp
+supabase/db/kong_config.yaml
+
+supabase/docker
+supabase/.gitignore
+
+supabase/db/backups/
+supabase/db/dumps/
+
+supabase/logs/
+supabase/.supabase
+
+supabase/studio/.next
