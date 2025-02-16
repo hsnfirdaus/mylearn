@@ -1,0 +1,4 @@
+storePassword=
+keyPassword=
+keyAlias=dev
+storeFile=/home/hasan/Android/dev-keystore.jks
