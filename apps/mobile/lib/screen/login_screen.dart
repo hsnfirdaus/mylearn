@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:mylearn/style.dart';
+import 'package:mylearn/theme/theme_extension.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final supabase = Supabase.instance.client;
@@ -42,6 +42,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.appTheme;
     return Scaffold(
       body: Container(
         padding: EdgeInsets.all(24),
@@ -66,12 +67,12 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   Text(
                     "Selamat Datang di Aplikasi MyLearn!",
-                    style: AppTextStyles.heading1,
+                    style: context.appTheme.heading1,
                     textAlign: TextAlign.center,
                   ),
                   Text(
                     "Masuk menggunakan akun Google anda untuk mulai menggunakan aplikasi.",
-                    style: AppTextStyles.bodyText,
+                    style: theme.bodyText,
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -88,10 +89,7 @@ class LoginScreen extends StatelessWidget {
 
                   await supabase.auth.signInWithOAuth(OAuthProvider.google);
                 },
-                child: Text(
-                  "Masuk Dengan Google",
-                  style: AppTextStyles.buttonText,
-                ),
+                child: Text("Masuk Dengan Google", style: theme.buttonText),
               ),
             ),
           ],

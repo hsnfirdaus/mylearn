@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mylearn/components/custom_controller.dart';
-import 'package:mylearn/style.dart';
+import 'package:mylearn/theme/theme_extension.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SelectClass extends FormField<Map<String, dynamic>> {
@@ -8,6 +8,8 @@ class SelectClass extends FormField<Map<String, dynamic>> {
     : super(
         initialValue: controller?.value,
         builder: (state) {
+          final theme = state.context.appTheme;
+
           void setActiveItem(Map<String, dynamic> item) {
             state.didChange(item);
             controller?.setValue(item);
@@ -27,7 +29,7 @@ class SelectClass extends FormField<Map<String, dynamic>> {
                   label,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: state.hasError ? AppColors.error : AppColors.text,
+                    color: state.hasError ? theme.error : theme.text,
                   ),
                 ),
               ),
@@ -39,7 +41,7 @@ class SelectClass extends FormField<Map<String, dynamic>> {
                     showModalBottomSheet<void>(
                       context: state.context,
                       isScrollControlled: true,
-                      backgroundColor: AppColors.background,
+                      backgroundColor: theme.background,
                       builder: (BuildContext context) {
                         return SizedBox(
                           child: Column(
@@ -75,9 +77,9 @@ class SelectClass extends FormField<Map<String, dynamic>> {
                                           ),
                                           child: Material(
                                             type: MaterialType.transparency,
-                                            surfaceTintColor:
-                                                AppColors.background,
+                                            surfaceTintColor: theme.background,
                                             child: ListTile(
+                                              splashColor: Colors.transparent,
                                               onTap: () {
                                                 setActiveItem(item);
                                                 Navigator.pop(context);
@@ -107,7 +109,7 @@ class SelectClass extends FormField<Map<String, dynamic>> {
                                   child: ElevatedButton(
                                     child: Text(
                                       'Tutup',
-                                      style: AppTextStyles.elevatedButtonText,
+                                      style: theme.elevatedButtonText,
                                     ),
                                     onPressed: () => Navigator.pop(context),
                                   ),
@@ -120,14 +122,12 @@ class SelectClass extends FormField<Map<String, dynamic>> {
                     );
                   },
                   style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.background200,
+                    backgroundColor: theme.background200,
                     padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                     shape: RoundedRectangleBorder(
                       side: BorderSide(
                         color:
-                            state.hasError
-                                ? AppColors.error
-                                : AppColors.background200,
+                            state.hasError ? theme.error : theme.background200,
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -140,7 +140,7 @@ class SelectClass extends FormField<Map<String, dynamic>> {
                       state.value == null
                           ? "Pilih Kelas"
                           : '${state.value!['full_class_name']} (${state.value!['admission_year']})',
-                      style: TextStyle(color: AppColors.text),
+                      style: TextStyle(color: theme.text),
                     ),
                   ),
                 ),
@@ -151,8 +151,8 @@ class SelectClass extends FormField<Map<String, dynamic>> {
                   margin: EdgeInsets.only(left: 20, right: 20, top: 4),
                   child: Text(
                     state.errorText ?? "Silahkan Pilih Kelas!",
-                    style: const TextStyle(
-                      color: AppColors.error,
+                    style: TextStyle(
+                      color: theme.error,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),

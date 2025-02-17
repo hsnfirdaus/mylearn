@@ -1,13 +1,19 @@
 import 'package:go_router/go_router.dart';
-import 'package:mylearn/screen/home_screen.dart';
+import 'package:mylearn/components/navbar_scaffold.dart';
+import 'package:mylearn/components/page_slide_transition.dart';
+import 'package:mylearn/screen/home/home_screen.dart';
 import 'package:mylearn/screen/login_screen.dart';
 import 'package:mylearn/screen/onboarding_screen.dart';
+import 'package:mylearn/screen/setting/setting_screen.dart';
+import 'package:mylearn/screen/setting/subject/setting_subject_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AppRoute {
   static const login = "/login";
   static const onboarding = "/onboarding";
   static const home = "/home";
+  static const setting = "/setting";
+  static const settingSubject = "/setting/subject";
 }
 
 final supabase = Supabase.instance.client;
@@ -26,11 +32,32 @@ class AppRouter {
         name: "Login",
         builder: (context, state) => LoginScreen(),
       ),
+      ShellRoute(
+        builder: (context, state, child) {
+          return NavbarScaffold(state: state, child: child);
+        },
+        routes: [
+          GoRoute(
+            path: AppRoute.home,
+            name: "Home",
+            builder: (context, state) => HomeScreen(),
+          ),
+          GoRoute(
+            path: AppRoute.setting,
+            name: "Setting",
+            builder: (context, state) => SettingScreen(),
+          ),
+        ],
+      ),
       GoRoute(
-        path: AppRoute.home,
-        name: "Home",
-        builder:
-            (context, state) => HomeScreen(title: 'Flutter Demo Home Page'),
+        path: AppRoute.settingSubject,
+        name: "ManageSubject",
+        pageBuilder: (context, state) {
+          return PageSlideTransition(
+            key: state.pageKey,
+            child: SettingSubjectScreen(),
+          );
+        },
       ),
       GoRoute(
         path: AppRoute.onboarding,
@@ -48,7 +75,11 @@ class AppRouter {
       }
 
       if (isAuthenticated && state.uri.toString().startsWith(AppRoute.login)) {
-        return AppRoute.onboarding;
+        if ((supabase.auth.currentUser?.userMetadata?['isBoarded']) == true) {
+          return AppRoute.home;
+        } else {
+          return AppRoute.onboarding;
+        }
       }
 
       return null;

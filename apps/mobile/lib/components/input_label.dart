@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mylearn/style.dart';
+import 'package:mylearn/theme/theme_extension.dart';
 
 class InputLabel extends StatefulWidget {
   const InputLabel({
@@ -44,6 +44,8 @@ class _InputLabelState extends State<InputLabel> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.appTheme;
+
     return Column(
       children: [
         SizedBox(
@@ -54,10 +56,10 @@ class _InputLabelState extends State<InputLabel> {
               fontWeight: FontWeight.bold,
               color:
                   _hasError
-                      ? AppColors.error
+                      ? theme.error
                       : _isFocused
-                      ? AppColors.primary
-                      : AppColors.text,
+                      ? theme.primary
+                      : theme.text,
             ),
           ),
         ),

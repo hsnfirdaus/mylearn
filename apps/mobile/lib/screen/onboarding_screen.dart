@@ -4,7 +4,7 @@ import 'package:mylearn/components/custom_controller.dart';
 import 'package:mylearn/components/input_label.dart';
 import 'package:mylearn/components/select_class.dart';
 import 'package:mylearn/router.dart';
-import 'package:mylearn/style.dart';
+import 'package:mylearn/theme/theme_extension.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -53,6 +53,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.appTheme;
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -72,12 +74,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               SizedBox(height: 12),
               Text(
                 "Atur Akun Kamu",
-                style: AppTextStyles.heading2,
+                style: theme.heading2,
                 textAlign: TextAlign.center,
               ),
               Text(
                 "Isi data dirimu sebelum mulai menggunakan aplikasi",
-                style: AppTextStyles.bodyText,
+                style: theme.bodyText,
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 24),
@@ -127,10 +129,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       doSubmit();
                     }
                   },
-                  child: Text(
-                    "Simpan Informasi",
-                    style: AppTextStyles.buttonText,
-                  ),
+                  child: Text("Simpan Informasi", style: theme.buttonText),
                 ),
               ),
             ],
