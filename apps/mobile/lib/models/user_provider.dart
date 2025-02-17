@@ -20,7 +20,9 @@ class UserProvider extends ChangeNotifier {
     }
     final student = await supabase
         .from("student")
-        .select("*")
+        .select(
+          "nim, user_id, name, email, class_id, class (id, study_program_code, semester, class_group, session_type, admission_year, full_class_name)",
+        )
         .eq("user_id", supabase.auth.currentUser!.id);
     if (student.isEmpty) {
       setStudent(null);

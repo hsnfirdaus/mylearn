@@ -34,8 +34,12 @@ Future main() async {
   GoRouter router = AppRouter().router;
 
   Supabase.instance.client.auth.onAuthStateChange.listen((data) async {
-    await userProvider.refreshStudent();
-    router.refresh();
+    if (data.event == AuthChangeEvent.signedIn ||
+        data.event == AuthChangeEvent.signedOut ||
+        data.event == AuthChangeEvent.userUpdated) {
+      await userProvider.refreshStudent();
+      router.refresh();
+    }
   });
 
   runApp(

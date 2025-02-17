@@ -497,3 +497,21 @@ CREATE POLICY "admin can do everything in subject_task_student"
     WITH CHECK (
         (SELECT authorize('admin'))
     );
+
+
+-- View For Available Subject
+CREATE VIEW available_subjects AS
+    WITH student_info AS (
+        SELECT st.nim, c.semester, c.study_program_code
+        FROM student st
+        JOIN class c ON st.class_id = c.id
+        WHERE st.user_id = auth.uid()
+    )
+    SELECT s.*
+    FROM subject s
+    LEFT JOIN enrollment e
+        ON s.id = e.subject_id
+        AND e.student_nim = (SELECT nim FROM student_info)
+    WHERE e.subject_id IS NULL
+    AND s.semester = (SELECT semester FROM student_info)
+    AND s.study_program_code = (SELECT study_program_code FROM student_info);

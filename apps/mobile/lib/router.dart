@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
-import 'package:mylearn/components/navbar_scaffold.dart';
-import 'package:mylearn/components/page_slide_transition.dart';
+import 'package:mylearn/components/layout/navbar_scaffold.dart';
+import 'package:mylearn/components/layout/page_slide_transition.dart';
 import 'package:mylearn/screen/home/home_screen.dart';
 import 'package:mylearn/screen/login_screen.dart';
 import 'package:mylearn/screen/onboarding_screen.dart';

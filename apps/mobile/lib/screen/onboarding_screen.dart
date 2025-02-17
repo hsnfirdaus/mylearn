@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mylearn/components/custom_controller.dart';
-import 'package:mylearn/components/input_label.dart';
-import 'package:mylearn/components/select_class.dart';
+import 'package:mylearn/components/form/custom_controller.dart';
+import 'package:mylearn/components/form/input_label.dart';
+import 'package:mylearn/components/form/select_class.dart';
 import 'package:mylearn/router.dart';
 import 'package:mylearn/theme/theme_extension.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -23,7 +23,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final TextEditingController _nameController = TextEditingController(
     text: supabase.auth.currentUser?.userMetadata?['full_name'],
   );
-  final CustomController _classController = CustomController();
+  final CustomController<Map<String, dynamic>> _classController =
+      CustomController();
 
   Future doSubmit() async {
     final res = await supabase.from("student").upsert({
