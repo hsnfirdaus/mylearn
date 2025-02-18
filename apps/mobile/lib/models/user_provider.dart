@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:mylearn/models/semester.dart';
 import 'package:mylearn/models/student.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserProvider extends ChangeNotifier {
   Student? _student;
+  Semester? _semester;
 
   Student? get student => _student;
+  Semester? get semester => _semester;
 
   void setStudent(Student? newStudent) {
     _student = newStudent;
+    notifyListeners();
+  }
+
+  void setSemester(Semester? newSemester) {
+    _semester = newSemester;
     notifyListeners();
   }
 
@@ -30,5 +38,19 @@ class UserProvider extends ChangeNotifier {
     }
     final parsedStudent = Student.fromJson(student.first);
     setStudent(parsedStudent);
+  }
+
+  Future refreshSemester() async {
+    final supabase = Supabase.instance.client;
+    final semester = await supabase
+        .from("semester")
+        .select("*")
+        .eq("is_active", true);
+    if (semester.isEmpty) {
+      setSemester(null);
+      return;
+    }
+    final parsedSemester = Semester.fromJson(semester.first);
+    setSemester(parsedSemester);
   }
 }

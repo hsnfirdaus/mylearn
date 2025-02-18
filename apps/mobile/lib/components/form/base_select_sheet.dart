@@ -5,7 +5,7 @@ import 'package:mylearn/theme/theme_extension.dart';
 class BaseSelectSheet<T> extends StatefulWidget {
   final String initialSearchTerm;
   final void Function(String) onSearch;
-  final Future<List<T>> Function(String term) fetchFn;
+  final Future<List<T>> Function(BuildContext context, String term) fetchFn;
   final Widget Function(BuildContext context, T item, int index) buildItem;
 
   const BaseSelectSheet({
@@ -56,7 +56,7 @@ class _BaseSelectSheetState<T> extends State<BaseSelectSheet<T>> {
           ),
           Expanded(
             child: FutureBuilder(
-              future: widget.fetchFn(_searchTerm),
+              future: widget.fetchFn(context, _searchTerm),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());

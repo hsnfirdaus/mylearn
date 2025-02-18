@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import SelectAsync from "./select-async";
 import type { BaseSelect } from "./select";
 
-const SelectRoom: React.FC<BaseSelect> = ({ value, onChange }) => {
+const SelectRoom: React.FC<BaseSelect> = ({ ...rest }) => {
   const doSearch = async (search: string) => {
     const { data, error } = await supabase
       .from("room")
@@ -30,8 +30,7 @@ const SelectRoom: React.FC<BaseSelect> = ({ value, onChange }) => {
   return (
     <SelectAsync
       placeholder="Pilih Ruangan..."
-      value={value}
-      onChange={onChange}
+      {...rest}
       onSearch={doSearch}
       getSingleLabel={getLabel}
     />

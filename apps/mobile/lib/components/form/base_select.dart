@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mylearn/components/form/base_select_sheet.dart';
 import 'package:mylearn/components/form/custom_controller.dart';
+import 'package:mylearn/components/form/error_text.dart';
+import 'package:mylearn/components/form/form_label.dart';
+import 'package:mylearn/components/form/input_button.dart';
 import 'package:mylearn/theme/theme_extension.dart';
 
 class BaseSelect<T> extends FormField<T> {
@@ -9,7 +11,8 @@ class BaseSelect<T> extends FormField<T> {
   final CustomController<T>? controller;
   final String? placeholder;
   final String Function(T value) renderValue;
-  final Future<List<T>> Function(String searchTerm) fetchFn;
+  final Future<List<T>> Function(BuildContext context, String searchTerm)
+  fetchFn;
   final Widget Function(
     BuildContext context,
     T item,
@@ -38,100 +41,42 @@ class BaseSelect<T> extends FormField<T> {
              controller?.setValue(item);
            }
 
+           Future<void> onPressed() {
+             return showModalBottomSheet<void>(
+               context: state.context,
+               showDragHandle: true,
+               isScrollControlled: true,
+               backgroundColor: theme.background,
+               builder: (BuildContext context) {
+                 return BaseSelectSheet(
+                   fetchFn: fetchFn,
+                   initialSearchTerm: (state as _BaseSelectState<T>).searchTerm,
+                   onSearch: state.setSearchTerm,
+                   buildItem: (context, item, index) {
+                     return buildItem(context, item, index, state.value, () {
+                       setActiveItem(item);
+                       Navigator.pop(context);
+                     });
+                   },
+                 );
+               },
+             );
+           }
+
            return Column(
              children: [
-               SizedBox(
-                 width: double.infinity,
-                 child: Text(
-                   label,
-                   style: TextStyle(
-                     fontWeight: FontWeight.bold,
-                     color: state.hasError ? theme.error : theme.text,
-                   ),
-                 ),
-               ),
+               FormLabel(label: label, isError: state.hasError),
                SizedBox(height: 8),
-               SizedBox(
-                 width: double.infinity,
-                 child: FilledButton(
-                   onPressed: () {
-                     showModalBottomSheet<void>(
-                       context: state.context,
-                       showDragHandle: true,
-                       isScrollControlled: true,
-                       backgroundColor: theme.background,
-                       builder: (BuildContext context) {
-                         return BaseSelectSheet(
-                           fetchFn: fetchFn,
-                           initialSearchTerm:
-                               (state as _BaseSelectState<T>).searchTerm,
-                           onSearch: state.setSearchTerm,
-                           buildItem: (context, item, index) {
-                             return buildItem(
-                               context,
-                               item,
-                               index,
-                               state.value,
-                               () {
-                                 setActiveItem(item);
-                                 Navigator.pop(context);
-                               },
-                             );
-                           },
-                         );
-                       },
-                     );
-                   },
-                   style: FilledButton.styleFrom(
-                     backgroundColor: theme.background200,
-                     padding: EdgeInsets.symmetric(
-                       vertical: 20,
-                       horizontal: 20,
-                     ),
-                     shape: RoundedRectangleBorder(
-                       side: BorderSide(
-                         color:
-                             state.hasError ? theme.error : theme.background200,
-                         width: 2,
-                       ),
-                       borderRadius: BorderRadius.circular(10),
-                     ),
-                     splashFactory: NoSplash.splashFactory,
-                   ),
-                   child: Align(
-                     alignment: Alignment.centerLeft,
-                     child: Row(
-                       children: [
-                         Expanded(
-                           child: Text(
-                             state.value == null
-                                 ? placeholder ?? "Pilih Opsi"
-                                 : renderValue(state.value as T),
-                             style: TextStyle(color: theme.text),
-                           ),
-                         ),
-                         Icon(
-                           LucideIcons.chevronRight,
-                           color: theme.textPlaceholder,
-                         ),
-                       ],
-                     ),
-                   ),
-                 ),
+               InputButton(
+                 label:
+                     state.value == null
+                         ? placeholder ?? "Pilih Opsi"
+                         : renderValue(state.value as T),
+                 isError: state.hasError,
+                 onPressed: onPressed,
                ),
                if (state.hasError)
-                 Container(
-                   width: double.infinity,
-                   margin: EdgeInsets.only(top: 4),
-                   child: Text(
-                     state.errorText ?? "Silahkan Pilih Opsi!",
-                     style: TextStyle(
-                       color: theme.error,
-                       fontWeight: FontWeight.bold,
-                       fontSize: 12,
-                     ),
-                   ),
-                 ),
+                 ErrorText(message: state.errorText ?? "Silahkan Pilih Opsi!"),
              ],
            );
          },

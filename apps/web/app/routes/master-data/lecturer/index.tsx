@@ -50,6 +50,22 @@ const Lecturer: React.FC<Route.ComponentProps> = ({ loaderData }) => {
 
   const columns: ClientLoaderTableCol<typeof clientLoader>[] = [
     {
+      title: "Foto",
+      key: "photo_url",
+      colClassName: "w-14",
+      renderItem(value, item) {
+        return (
+          <figure className="h-12 w-12 overflow-hidden rounded-md bg-accent">
+            {value ? (
+              <img src={value} className="h-full w-full object-cover object-center" />
+            ) : (
+              <React.Fragment />
+            )}
+          </figure>
+        );
+      },
+    },
+    {
       title: "NIK",
       colClassName: "font-bold",
       key: "nik",

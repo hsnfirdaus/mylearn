@@ -25,6 +25,7 @@ Future main() async {
   );
 
   UserProvider userProvider = UserProvider();
+  await userProvider.refreshSemester();
   await userProvider.refreshStudent();
 
   // await Supabase.instance.client.auth.exchangeCodeForSession(

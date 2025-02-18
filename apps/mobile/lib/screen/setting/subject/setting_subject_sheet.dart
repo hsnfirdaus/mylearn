@@ -35,16 +35,14 @@ class _SettingSubjectSheetState extends State<SettingSubjectSheet> {
 
     Future doSubmit() async {
       final supabase = Supabase.instance.client;
-      final student = Provider.of<UserProvider>(context, listen: false).student;
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
 
       final res = await supabase.from("enrollment").insert({
-        "student_nim": student!.nim,
+        "student_nim": userProvider.student!.nim,
         "subject_id": _subjectController.value!['id'],
+        "semester_id": userProvider.semester!.id,
       });
       if (res?.error == null) {
-        await supabase.auth.updateUser(
-          UserAttributes(data: {'isBoarded': true}),
-        );
         widget.onSuccess();
         closeSheet();
       } else {

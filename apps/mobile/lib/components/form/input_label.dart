@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mylearn/theme/theme_extension.dart';
+import 'package:mylearn/components/form/form_label.dart';
 
 class InputLabel extends StatefulWidget {
   const InputLabel({
@@ -8,12 +8,18 @@ class InputLabel extends StatefulWidget {
     required this.hintText,
     this.validator,
     this.controller,
+    this.minLines,
+    this.maxLines = 1,
+    this.keyboardType,
   });
 
   final String label;
   final String? hintText;
   final String? Function(String?)? validator;
   final TextEditingController? controller;
+  final int? maxLines;
+  final TextInputType? keyboardType;
+  final int? minLines;
 
   @override
   State<InputLabel> createState() => _InputLabelState();
@@ -44,24 +50,12 @@ class _InputLabelState extends State<InputLabel> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.appTheme;
-
     return Column(
       children: [
-        SizedBox(
-          width: double.infinity,
-          child: Text(
-            widget.label,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color:
-                  _hasError
-                      ? theme.error
-                      : _isFocused
-                      ? theme.primary
-                      : theme.text,
-            ),
-          ),
+        FormLabel(
+          label: widget.label,
+          isError: _hasError,
+          isFocused: _isFocused,
         ),
         SizedBox(height: 8),
         TextFormField(
@@ -84,6 +78,10 @@ class _InputLabelState extends State<InputLabel> {
           decoration: InputDecoration(hintText: widget.hintText),
           focusNode: _focusNode,
           controller: widget.controller,
+          minLines: widget.minLines,
+          maxLines: widget.maxLines,
+          keyboardType: widget.keyboardType,
+          style: TextStyle(fontSize: 14),
         ),
       ],
     );

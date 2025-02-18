@@ -6,12 +6,14 @@ import 'package:mylearn/screen/login_screen.dart';
 import 'package:mylearn/screen/onboarding_screen.dart';
 import 'package:mylearn/screen/setting/setting_screen.dart';
 import 'package:mylearn/screen/setting/subject/setting_subject_screen.dart';
+import 'package:mylearn/screen/task/task_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AppRoute {
   static const login = "/login";
   static const onboarding = "/onboarding";
   static const home = "/home";
+  static const task = "/task";
   static const setting = "/setting";
   static const settingSubject = "/setting/subject";
 }
@@ -41,6 +43,11 @@ class AppRouter {
             path: AppRoute.home,
             name: "Home",
             builder: (context, state) => HomeScreen(),
+          ),
+          GoRoute(
+            path: AppRoute.task,
+            name: "Task",
+            builder: (context, state) => TaskScreen(),
           ),
           GoRoute(
             path: AppRoute.setting,

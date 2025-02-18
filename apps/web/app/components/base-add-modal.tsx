@@ -52,7 +52,18 @@ export default function BaseAddModal<
 
   useEffect(() => {
     if (data) {
-      form.reset(data);
+      var newData: { [key: string]: any } = {};
+      for (const key in data) {
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+          const element = data[key];
+          if (element === null) {
+            newData[key] = undefined;
+            continue;
+          }
+          newData[key] = element;
+        }
+      }
+      form.reset(newData, { keepDefaultValues: true });
     }
   }, [data]);
 

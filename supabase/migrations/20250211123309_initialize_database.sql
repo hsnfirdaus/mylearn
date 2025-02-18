@@ -198,6 +198,7 @@ CREATE TABLE public.lecturer (
     name TEXT NOT NULL,
     email TEXT UNIQUE,
     phone_number TEXT CHECK (phone_number ~ '^\+?[1-9][0-9]{7,14}$'),
+    photo_url TEXT DEFAULT NULL,
     major_code TEXT REFERENCES public.major(code) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
@@ -310,8 +311,9 @@ CREATE POLICY "admin can do everything in semester"
 -- Enrollment table
 CREATE TABLE public.enrollment (
     student_nim TEXT REFERENCES public.student(nim) ON UPDATE CASCADE ON DELETE CASCADE,
-    subject_id UUID REFERENCES public.subject(id) ON DELETE CASCADE,
-    PRIMARY KEY (student_nim, subject_id)
+    subject_id UUID NOT NULL REFERENCES public.subject(id) ON DELETE CASCADE,
+    semester_id UUID NOT NULL REFERENCES public.semester(id) ON DELETE CASCADE,
+    PRIMARY KEY (student_nim, subject_id, semester_id)
 );
 
 -- RLS Student Table
@@ -413,11 +415,12 @@ CREATE TABLE public.subject_task (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title TEXT NOT NULL,
     description TEXT,
-    subject_id UUID REFERENCES public.subject(id) ON DELETE CASCADE,
-    class_id UUID REFERENCES public.class(id) ON DELETE CASCADE,
-    student_nim TEXT REFERENCES public.student(nim) ON UPDATE CASCADE ON DELETE CASCADE,
+    semester_id UUID NOT NULL REFERENCES public.semester(id) ON DELETE CASCADE,
+    subject_id UUID NOT NULL REFERENCES public.subject(id) ON DELETE CASCADE,
+    class_id UUID NOT NULL REFERENCES public.class(id) ON DELETE CASCADE,
+    student_nim TEXT NOT NULL REFERENCES public.student(nim) ON UPDATE CASCADE ON DELETE CASCADE,
     learning_link VARCHAR(500) DEFAULT NULL,
-    deadline TIMESTAMP NOT NULL,
+    deadline TIMESTAMP DEFAULT NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -498,6 +501,25 @@ CREATE POLICY "admin can do everything in subject_task_student"
         (SELECT authorize('admin'))
     );
 
+-- Enforcing Semester
+CREATE OR REPLACE FUNCTION enforce_single_active_semester()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.is_active = TRUE THEN
+        UPDATE public.semester
+        SET is_active = false
+        WHERE id <> NEW.id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_enforce_single_active_semester
+BEFORE INSERT OR UPDATE ON public.semester
+FOR EACH ROW
+EXECUTE FUNCTION enforce_single_active_semester();
+
 
 -- View For Available Subject
 CREATE VIEW available_subjects AS
@@ -506,12 +528,67 @@ CREATE VIEW available_subjects AS
         FROM student st
         JOIN class c ON st.class_id = c.id
         WHERE st.user_id = auth.uid()
+    ), current_semester AS (
+        SELECT id
+        FROM semester
+        WHERE is_active = true
+        LIMIT 1
     )
     SELECT s.*
     FROM subject s
+    CROSS JOIN student_info si
+    CROSS JOIN current_semester cs
     LEFT JOIN enrollment e
         ON s.id = e.subject_id
-        AND e.student_nim = (SELECT nim FROM student_info)
+        AND e.student_nim = si.nim
+        AND e.semester_id = cs.id
     WHERE e.subject_id IS NULL
-    AND s.semester = (SELECT semester FROM student_info)
-    AND s.study_program_code = (SELECT study_program_code FROM student_info);
+    AND s.semester = si.semester
+    AND s.study_program_code = si.study_program_code;
+
+COMMENT ON VIEW available_subjects IS e'@graphql({"primary_key_columns": ["id"]})';
+
+
+-- View For Schedule
+CREATE VIEW my_schedules AS
+    WITH student_info AS (
+        SELECT class_id, nim
+        FROM student
+        WHERE user_id = auth.uid()
+    ), current_semester AS (
+        SELECT id
+        FROM semester
+        WHERE is_active = true
+        LIMIT 1
+    )
+    SELECT
+        sc.id,
+        sc.is_theory,
+        sc.is_practice,
+        sc.day_of_week,
+        sc.start_time,
+        sc.end_time,
+        sc.room_code,
+        sc.zoom_link,
+        sc.subject_id,
+        sb.name AS subject_name,
+        sb.code AS subject_code,
+        sc.lecturer_nik,
+        l.code AS lecturer_code,
+        l.name AS lecturer_name,
+        l.photo_url AS lecturer_photo_url
+    FROM schedule sc
+    CROSS JOIN student_info si
+    CROSS JOIN current_semester cs
+    JOIN subject sb
+        ON sb.id = sc.subject_id
+    JOIN lecturer l
+        ON l.nik = sc.lecturer_nik
+    JOIN enrollment e
+        ON e.student_nim =  si.nim
+        AND e.subject_id = sc.subject_id
+        AND e.semester_id = cs.id
+    WHERE sc.class_id = si.class_id;
+
+COMMENT ON VIEW my_schedules IS e'@graphql({"primary_key_columns": ["id"]})';
+

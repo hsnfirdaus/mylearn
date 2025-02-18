@@ -5,6 +5,7 @@ import 'package:mylearn/components/layout/title_rounded_scaffold.dart';
 import 'package:mylearn/components/tile_list_basic.dart';
 import 'package:mylearn/models/user_provider.dart';
 import 'package:mylearn/screen/setting/subject/setting_subject_sheet.dart';
+import 'package:mylearn/theme/theme_extension.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -18,7 +19,51 @@ class SettingSubjectScreen extends StatefulWidget {
 class _SettingSubjectScreenState extends State<SettingSubjectScreen> {
   @override
   Widget build(BuildContext context) {
-    Future<void> showBottomSheet() {
+    final theme = context.appTheme;
+
+    showSnackBar(String message) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    }
+
+    Future<void> showDeleteDialog(Map<String, dynamic> item) async {
+      final result = await showDialog<bool>(
+        context: context,
+        builder:
+            (BuildContext context) => AlertDialog(
+              title: const Text('Apakah anda yakin?'),
+              content: Text(
+                'Mata kuliah ${item['subject']['name']} akan dihapus dari akun anda!',
+              ),
+              actions: <Widget>[
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Batal'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: theme.deleteButton,
+                  child: const Text('Hapus'),
+                ),
+              ],
+            ),
+      );
+      if (result == true) {
+        final res = await Supabase.instance.client
+            .from("enrollment")
+            .delete()
+            .eq("student_nim", item['student_nim'])
+            .eq("semester_id", item['semester_id'])
+            .eq("subject_id", item['subject']['id']);
+        if (res?.error == null) {
+          showSnackBar('Mata kuliah dihapus...');
+          setState(() {});
+        }
+      }
+    }
+
+    Future<void> showAddBottomSheet() {
       return showModalBottomSheet<void>(
         context: context,
         showDragHandle: true,
@@ -35,7 +80,7 @@ class _SettingSubjectScreenState extends State<SettingSubjectScreen> {
     return TitleRoundedScaffold(
       title: "Mata Kuliah",
       fab: FloatingActionButton.extended(
-        onPressed: showBottomSheet,
+        onPressed: showAddBottomSheet,
         icon: const Icon(LucideIcons.plus),
         label: const Text("Tambah"),
       ),
@@ -43,7 +88,9 @@ class _SettingSubjectScreenState extends State<SettingSubjectScreen> {
         builder: (context, value, child) {
           final future = Supabase.instance.client
               .from("enrollment")
-              .select("student_nim, subject(id, name, code)")
+              .select("student_nim, semester_id, subject(id, name, code)")
+              .eq("student_nim", value.student!.nim)
+              .eq("semester_id", value.semester!.id)
               .order("subject(code)", ascending: true);
 
           return FutureBuilder(
@@ -66,6 +113,11 @@ class _SettingSubjectScreenState extends State<SettingSubjectScreen> {
                   return TileListBasic(
                     title: item['subject']['name'],
                     subtitle: item['subject']['code'],
+                    trailing: IconButton(
+                      onPressed: () => showDeleteDialog(item),
+                      icon: Icon(LucideIcons.trash),
+                      color: theme.error,
+                    ),
                   );
                 }),
               );

@@ -16,19 +16,24 @@ class NavbarScaffold extends StatelessWidget {
     if (currentPath.startsWith(AppRoute.setting)) {
       return AppRoute.setting;
     }
-
+    if (currentPath.startsWith(AppRoute.task)) {
+      return AppRoute.task;
+    }
     return AppRoute.home;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = context.appTheme;
+    final activeItem = getBasePath();
 
     void navigate(String path) {
-      context.go(path);
+      if (activeItem == AppRoute.home) {
+        context.go(path);
+      } else {
+        context.replace(path);
+      }
     }
-
-    final activeItem = getBasePath();
 
     return Scaffold(
       extendBody: true,
@@ -51,7 +56,8 @@ class NavbarScaffold extends StatelessWidget {
                 NavItem(
                   icon: LucideIcons.book,
                   label: "Tugas",
-                  isActive: false,
+                  isActive: activeItem == AppRoute.task,
+                  onTap: () => navigate(AppRoute.task),
                 ),
                 NavItem(
                   icon: LucideIcons.calendar,

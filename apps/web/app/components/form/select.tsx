@@ -19,8 +19,9 @@ export interface SelectOption<T extends ValidKey = string> {
 }
 
 export interface BaseSelect<T extends ValidKey = string> {
-  value?: T;
-  onChange?: (v?: T) => void;
+  isAllowUnselect?: boolean;
+  value?: T | null;
+  onChange?: (v?: T | null) => void;
 }
 
 interface Props<T extends ValidKey = string> extends BaseSelect<T> {
@@ -38,6 +39,7 @@ export default function Select<T extends ValidKey = string>({
   isLoading,
   searchValue,
   onSearchValueChange,
+  isAllowUnselect,
 }: Props<T>) {
   const [open, setOpen] = useState(false);
   const [currentLabel, setCurrentLabel] = useState<string>();
@@ -89,6 +91,11 @@ export default function Select<T extends ValidKey = string>({
                   key={item.value}
                   value={item.label}
                   onSelect={() => {
+                    if (item.value === value && isAllowUnselect) {
+                      onChange?.(null);
+                      setOpen(false);
+                      return;
+                    }
                     onChange?.(item.value);
                     setOpen(false);
                   }}

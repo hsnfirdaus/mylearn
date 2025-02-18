@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:mylearn/components/form/base_select.dart';
+import 'package:mylearn/components/form/custom_controller.dart';
 import 'package:mylearn/components/tile_list_basic.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -13,7 +15,7 @@ class SelectClass extends BaseSelect<Map<String, dynamic>> {
              (value) =>
                  '${value['full_class_name']} (${value['admission_year']})',
          placeholder: "Pilih Kelas",
-         fetchFn: (String search) async {
+         fetchFn: (BuildContext context, String search) async {
            var query = Supabase.instance.client
                .from("class")
                .select("id,admission_year,full_class_name");
@@ -34,4 +36,10 @@ class SelectClass extends BaseSelect<Map<String, dynamic>> {
            );
          },
        );
+}
+
+extension SelectClassController on CustomController<Map<String, dynamic>> {
+  String? get classId {
+    return value?['id'];
+  }
 }

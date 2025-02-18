@@ -12,7 +12,6 @@ import React from "react";
 import type { AddModalProps } from "~/components/base-add-modal";
 import BaseAddModal from "~/components/base-add-modal";
 import supabase from "~/lib/supabase";
-import DatePicker from "~/components/form/date-picker";
 import { Switch } from "~/components/ui/switch";
 import SelectClass from "~/components/form/select-class";
 import SelectSubject from "~/components/form/select-subject";
@@ -31,7 +30,7 @@ const formSchema = z.object({
   day_of_week: z.number(),
   start_time: z.string(),
   end_time: z.string(),
-  room_code: z.string().optional(),
+  room_code: z.string().nullable().optional(),
   zoom_link: z.string().optional(),
 });
 const ScheduleAddModal: React.FC<AddModalProps<"schedule">> = (props) => {
@@ -247,7 +246,7 @@ const ScheduleAddModal: React.FC<AddModalProps<"schedule">> = (props) => {
               <FormItem>
                 <FormLabel>Ruangan</FormLabel>
                 <FormControl>
-                  <SelectRoom {...field} />
+                  <SelectRoom isAllowUnselect={true} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

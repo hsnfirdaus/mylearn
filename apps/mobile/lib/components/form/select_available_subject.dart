@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:mylearn/components/form/base_select.dart';
+import 'package:mylearn/components/form/custom_controller.dart';
 import 'package:mylearn/components/tile_list_basic.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -11,7 +13,7 @@ class SelectAvailableSubject extends BaseSelect<Map<String, dynamic>> {
   }) : super(
          renderValue: (value) => '[${value['code']}] ${value['name']}',
          placeholder: "Pilih Mata Kuliah",
-         fetchFn: (String search) async {
+         fetchFn: (BuildContext context, String search) async {
            var query = Supabase.instance.client
                .from("available_subjects")
                .select("id,name,code");
@@ -35,4 +37,11 @@ class SelectAvailableSubject extends BaseSelect<Map<String, dynamic>> {
            );
          },
        );
+}
+
+extension SelectAvailableSubjectController
+    on CustomController<Map<String, dynamic>> {
+  String? get subjectId {
+    return value?['id'];
+  }
 }

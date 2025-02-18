@@ -92,20 +92,29 @@ const Semester: React.FC<Route.ComponentProps> = ({ loaderData }) => {
       renderItem: (v) => {
         const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu", "Minggu"];
 
-        return days[v as number];
+        return days[(v as number) - 1];
       },
     },
     {
       title: "Mulai",
       key: "start_time",
+      renderItem: (v) => (v + "").substring(0, 5),
     },
     {
       title: "Selesai",
       key: "end_time",
+      renderItem: (v) => (v + "").substring(0, 5),
     },
     {
       title: "Dosen",
       key: ["lecturer", "name"],
+    },
+    {
+      title: "Sesi",
+      key: "is_practice",
+      renderItem(value, item) {
+        return <React.Fragment>{value ? "Praktikum" : "Teori"}</React.Fragment>;
+      },
     },
     {
       title: "Ruangan",

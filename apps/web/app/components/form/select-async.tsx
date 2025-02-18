@@ -13,6 +13,7 @@ const SelectAsync: React.FC<Props> = ({
   onChange,
   onSearch,
   getSingleLabel,
+  ...rest
 }) => {
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [isLoading, startLoading] = useTransition();
@@ -64,6 +65,7 @@ const SelectAsync: React.FC<Props> = ({
       value={value}
       onChange={onChange}
       onSearchValueChange={setSearch}
+      {...rest}
     />
   );
 };

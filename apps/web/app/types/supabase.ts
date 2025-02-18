@@ -117,6 +117,12 @@ export type Database = {
           {
             foreignKeyName: "enrollment_subject_id_fkey"
             columns: ["subject_id"]
+            referencedRelation: "available_subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "enrollment_subject_id_fkey"
+            columns: ["subject_id"]
             referencedRelation: "subject"
             referencedColumns: ["id"]
           },
@@ -130,6 +136,7 @@ export type Database = {
           name: string
           nik: string
           phone_number: string | null
+          photo_url: string | null
         }
         Insert: {
           code?: string | null
@@ -138,6 +145,7 @@ export type Database = {
           name: string
           nik: string
           phone_number?: string | null
+          photo_url?: string | null
         }
         Update: {
           code?: string | null
@@ -146,6 +154,7 @@ export type Database = {
           name?: string
           nik?: string
           phone_number?: string | null
+          photo_url?: string | null
         }
         Relationships: [
           {
@@ -249,6 +258,12 @@ export type Database = {
             foreignKeyName: "schedule_semester_id_fkey"
             columns: ["semester_id"]
             referencedRelation: "semester"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "schedule_subject_id_fkey"
+            columns: ["subject_id"]
+            referencedRelation: "available_subjects"
             referencedColumns: ["id"]
           },
           {
@@ -420,6 +435,12 @@ export type Database = {
           {
             foreignKeyName: "subject_task_subject_id_fkey"
             columns: ["subject_id"]
+            referencedRelation: "available_subjects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subject_task_subject_id_fkey"
+            columns: ["subject_id"]
             referencedRelation: "subject"
             referencedColumns: ["id"]
           },
@@ -485,7 +506,23 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      available_subjects: {
+        Row: {
+          code: string | null
+          id: string | null
+          name: string | null
+          semester: number | null
+          study_program_code: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subject_study_program_code_fkey"
+            columns: ["study_program_code"]
+            referencedRelation: "study_program"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
     }
     Functions: {
       authorize: {

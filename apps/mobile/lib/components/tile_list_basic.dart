@@ -6,6 +6,7 @@ class TileListBasic extends StatelessWidget {
   final String subtitle;
   final void Function()? onTap;
   final bool selected;
+  final Widget? trailing;
 
   const TileListBasic({
     super.key,
@@ -13,6 +14,7 @@ class TileListBasic extends StatelessWidget {
     required this.subtitle,
     this.onTap,
     this.selected = false,
+    this.trailing,
   });
 
   @override
@@ -29,6 +31,7 @@ class TileListBasic extends StatelessWidget {
           selected: selected,
           title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Text(subtitle, style: TextStyle(fontSize: 12)),
+          trailing: trailing,
         ),
       ),
     );

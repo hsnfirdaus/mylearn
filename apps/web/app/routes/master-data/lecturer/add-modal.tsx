@@ -13,6 +13,7 @@ const formSchema = z.object({
   name: z.string(),
   email: z.string().email().optional(),
   phone_number: z.string().optional(),
+  photo_url: z.string().url().optional(),
   major_code: z.string(),
 });
 const LecturerAddModal: React.FC<AddModalProps<"lecturer">> = (props) => {
@@ -23,6 +24,7 @@ const LecturerAddModal: React.FC<AddModalProps<"lecturer">> = (props) => {
       name: values.name,
       email: values.email,
       phone_number: values.phone_number,
+      photo_url: values.photo_url,
       major_code: values.major_code,
     });
   };
@@ -36,6 +38,7 @@ const LecturerAddModal: React.FC<AddModalProps<"lecturer">> = (props) => {
         name: values.name,
         email: values.email,
         phone_number: values.phone_number,
+        photo_url: values.photo_url,
         major_code: values.major_code,
       })
       .eq("nik", props.data!.nik);
@@ -104,6 +107,19 @@ const LecturerAddModal: React.FC<AddModalProps<"lecturer">> = (props) => {
                 <FormLabel>Nomor Telepon</FormLabel>
                 <FormControl>
                   <Input placeholder="08xxxxxxxxxxx" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="photo_url"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>URL Foto</FormLabel>
+                <FormControl>
+                  <Input placeholder="https://....." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
