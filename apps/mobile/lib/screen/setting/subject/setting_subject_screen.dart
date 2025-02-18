@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mylearn/components/empty.dart';
-import 'package:mylearn/components/layout/title_rounded_scaffold.dart';
 import 'package:mylearn/components/tile_list_basic.dart';
 import 'package:mylearn/models/user_provider.dart';
 import 'package:mylearn/screen/setting/subject/setting_subject_sheet.dart';
@@ -67,6 +66,7 @@ class _SettingSubjectScreenState extends State<SettingSubjectScreen> {
       return showModalBottomSheet<void>(
         context: context,
         showDragHandle: true,
+        useRootNavigator: true,
         builder: (BuildContext context) {
           return SettingSubjectSheet(
             onSuccess: () {
@@ -77,54 +77,64 @@ class _SettingSubjectScreenState extends State<SettingSubjectScreen> {
       );
     }
 
-    return TitleRoundedScaffold(
-      title: "Mata Kuliah",
-      fab: FloatingActionButton.extended(
-        onPressed: showAddBottomSheet,
-        icon: const Icon(LucideIcons.plus),
-        label: const Text("Tambah"),
-      ),
-      child: Consumer<UserProvider>(
-        builder: (context, value, child) {
-          final future = Supabase.instance.client
-              .from("enrollment")
-              .select("student_nim, semester_id, subject(id, name, code)")
-              .eq("student_nim", value.student!.nim)
-              .eq("semester_id", value.semester!.id)
-              .order("subject(code)", ascending: true);
+    return Stack(
+      children: [
+        Consumer<UserProvider>(
+          builder: (context, value, child) {
+            final future = Supabase.instance.client
+                .from("enrollment")
+                .select("student_nim, semester_id, subject(id, name, code)")
+                .eq("student_nim", value.student!.nim)
+                .eq("semester_id", value.semester!.id)
+                .order("subject(code)", ascending: true);
 
-          return FutureBuilder(
-            future: future,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
-              }
+            return FutureBuilder(
+              future: future,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              final subjects = snapshot.data!;
-              if (subjects.isEmpty) {
-                return const Empty();
-              }
-              return ListView.builder(
-                itemCount: subjects.length,
-                padding: EdgeInsets.only(left: 24, right: 24, top: 24),
-                itemBuilder: ((context, index) {
-                  final item = subjects[index];
+                final subjects = snapshot.data!;
+                if (subjects.isEmpty) {
+                  return const Empty();
+                }
+                return ListView.builder(
+                  itemCount: subjects.length,
+                  padding: EdgeInsets.only(
+                    left: 24,
+                    right: 24,
+                    top: 24,
+                    bottom: 80,
+                  ),
+                  itemBuilder: ((context, index) {
+                    final item = subjects[index];
 
-                  return TileListBasic(
-                    title: item['subject']['name'],
-                    subtitle: item['subject']['code'],
-                    trailing: IconButton(
-                      onPressed: () => showDeleteDialog(item),
-                      icon: Icon(LucideIcons.trash),
-                      color: theme.error,
-                    ),
-                  );
-                }),
-              );
-            },
-          );
-        },
-      ),
+                    return TileListBasic(
+                      title: item['subject']['name'],
+                      subtitle: item['subject']['code'],
+                      trailing: IconButton(
+                        onPressed: () => showDeleteDialog(item),
+                        icon: Icon(LucideIcons.trash),
+                        color: theme.error,
+                      ),
+                    );
+                  }),
+                );
+              },
+            );
+          },
+        ),
+        Positioned(
+          right: 24,
+          bottom: 24,
+          child: FloatingActionButton.extended(
+            onPressed: showAddBottomSheet,
+            icon: const Icon(LucideIcons.plus),
+            label: const Text("Tambah"),
+          ),
+        ),
+      ],
     );
   }
 }

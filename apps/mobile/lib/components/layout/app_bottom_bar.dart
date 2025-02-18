@@ -5,10 +5,16 @@ import 'package:mylearn/components/layout/nav_item.dart';
 import 'package:mylearn/router.dart';
 import 'package:mylearn/theme/theme_extension.dart';
 
-class NavbarScaffold extends StatelessWidget {
-  const NavbarScaffold({super.key, required this.child, required this.state});
+const List<String> visibleNavBar = [
+  AppRoute.home,
+  AppRoute.task,
+  AppRoute.schedule,
+  AppRoute.setting,
+];
 
-  final Widget child;
+class AppBottomBar extends StatelessWidget {
+  const AppBottomBar({super.key, required this.state});
+
   final GoRouterState state;
 
   String getBasePath() {
@@ -19,7 +25,14 @@ class NavbarScaffold extends StatelessWidget {
     if (currentPath.startsWith(AppRoute.task)) {
       return AppRoute.task;
     }
+    if (currentPath.startsWith(AppRoute.schedule)) {
+      return AppRoute.schedule;
+    }
     return AppRoute.home;
+  }
+
+  bool isNavBarVisible() {
+    return visibleNavBar.contains(state.fullPath);
   }
 
   @override
@@ -35,9 +48,12 @@ class NavbarScaffold extends StatelessWidget {
       }
     }
 
-    return Scaffold(
-      extendBody: true,
-      bottomNavigationBar: Container(
+    return AnimatedPositioned(
+      duration: Duration(milliseconds: 300),
+      bottom: isNavBarVisible() ? 0 : -100,
+      left: 0,
+      right: 0,
+      child: Container(
         margin: EdgeInsets.only(left: 12, right: 12, bottom: 12),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(32),
@@ -62,7 +78,8 @@ class NavbarScaffold extends StatelessWidget {
                 NavItem(
                   icon: LucideIcons.calendar,
                   label: "Jadwal",
-                  isActive: false,
+                  isActive: activeItem == AppRoute.schedule,
+                  onTap: () => navigate(AppRoute.schedule),
                 ),
                 NavItem(
                   icon: LucideIcons.settings,
@@ -75,7 +92,6 @@ class NavbarScaffold extends StatelessWidget {
           ),
         ),
       ),
-      body: child,
     );
   }
 }

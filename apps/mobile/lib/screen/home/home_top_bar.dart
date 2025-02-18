@@ -12,8 +12,7 @@ class HomeTopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.appTheme;
 
-    return Container(
-      width: double.infinity,
+    return Padding(
       padding: EdgeInsets.all(24),
       child: Row(
         children: [

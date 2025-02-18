@@ -1,11 +1,13 @@
 import 'package:go_router/go_router.dart';
-import 'package:mylearn/components/layout/navbar_scaffold.dart';
+import 'package:mylearn/components/layout/app_scaffold.dart';
 import 'package:mylearn/components/layout/page_slide_transition.dart';
 import 'package:mylearn/screen/home/home_screen.dart';
 import 'package:mylearn/screen/login_screen.dart';
 import 'package:mylearn/screen/onboarding_screen.dart';
+import 'package:mylearn/screen/schedule/schedule_screen.dart';
 import 'package:mylearn/screen/setting/setting_screen.dart';
 import 'package:mylearn/screen/setting/subject/setting_subject_screen.dart';
+import 'package:mylearn/screen/task/detail/task_detail_screen.dart';
 import 'package:mylearn/screen/task/task_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -14,6 +16,9 @@ class AppRoute {
   static const onboarding = "/onboarding";
   static const home = "/home";
   static const task = "/task";
+  static String taskDetail({String subjectTaskId = ':subjectTaskId'}) =>
+      '/task/detail/$subjectTaskId';
+  static const schedule = "/schedule";
   static const setting = "/setting";
   static const settingSubject = "/setting/subject";
 }
@@ -36,7 +41,7 @@ class AppRouter {
       ),
       ShellRoute(
         builder: (context, state, child) {
-          return NavbarScaffold(state: state, child: child);
+          return AppScaffold(state: state, child: child);
         },
         routes: [
           GoRoute(
@@ -50,21 +55,38 @@ class AppRouter {
             builder: (context, state) => TaskScreen(),
           ),
           GoRoute(
+            path: AppRoute.taskDetail(),
+            name: "TaskDetail",
+            pageBuilder: (context, state) {
+              return PageSlideTransition(
+                key: state.pageKey,
+                child: TaskDetailScreen(
+                  subjectTaskId: state.pathParameters['subjectTaskId']!,
+                ),
+              );
+            },
+          ),
+          GoRoute(
+            path: AppRoute.schedule,
+            name: "Schedule",
+            builder: (context, state) => ScheduleScreen(),
+          ),
+          GoRoute(
             path: AppRoute.setting,
             name: "Setting",
             builder: (context, state) => SettingScreen(),
           ),
+          GoRoute(
+            path: AppRoute.settingSubject,
+            name: "ManageSubject",
+            pageBuilder: (context, state) {
+              return PageSlideTransition(
+                key: state.pageKey,
+                child: SettingSubjectScreen(),
+              );
+            },
+          ),
         ],
-      ),
-      GoRoute(
-        path: AppRoute.settingSubject,
-        name: "ManageSubject",
-        pageBuilder: (context, state) {
-          return PageSlideTransition(
-            key: state.pageKey,
-            child: SettingSubjectScreen(),
-          );
-        },
       ),
       GoRoute(
         path: AppRoute.onboarding,

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:mylearn/components/layout/with_top_bar.dart';
 import 'package:mylearn/router.dart';
-import 'package:mylearn/screen/setting/setting_top_bar.dart';
 import 'package:mylearn/theme/theme_extension.dart';
 
 class SettingScreen extends StatelessWidget {
@@ -11,19 +9,16 @@ class SettingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WithTopBar(
-      topBar: SettingTopBar(),
-      child: ListView(
-        children: [
-          SizedBox(height: 8),
-          ListItem(
-            icon: LucideIcons.bookCheck,
-            onTap: () => context.push(AppRoute.settingSubject),
-            label: "Kelola Mata Kuliah",
-          ),
-          ListItem(icon: LucideIcons.logOut, onTap: () => {}, label: "Keluar"),
-        ],
-      ),
+    return ListView(
+      children: [
+        SizedBox(height: 8),
+        ListItem(
+          icon: LucideIcons.bookCheck,
+          onTap: () => context.push(AppRoute.settingSubject),
+          label: "Kelola Mata Kuliah",
+        ),
+        ListItem(icon: LucideIcons.logOut, onTap: () => {}, label: "Keluar"),
+      ],
     );
   }
 }

@@ -4,7 +4,6 @@ import 'package:mylearn/components/form/custom_controller.dart';
 import 'package:mylearn/components/form/error_text.dart';
 import 'package:mylearn/components/form/form_label.dart';
 import 'package:mylearn/components/form/input_button.dart';
-import 'package:mylearn/theme/theme_extension.dart';
 
 class BaseSelect<T> extends FormField<T> {
   final String label;
@@ -34,8 +33,6 @@ class BaseSelect<T> extends FormField<T> {
   }) : super(
          initialValue: controller?.value,
          builder: (state) {
-           final theme = state.context.appTheme;
-
            void setActiveItem(T? item) {
              state.didChange(item);
              controller?.setValue(item);
@@ -46,7 +43,7 @@ class BaseSelect<T> extends FormField<T> {
                context: state.context,
                showDragHandle: true,
                isScrollControlled: true,
-               backgroundColor: theme.background,
+               useRootNavigator: true,
                builder: (BuildContext context) {
                  return BaseSelectSheet(
                    fetchFn: fetchFn,

@@ -3,10 +3,11 @@ import 'package:mylearn/theme/theme_extension.dart';
 
 class TileListBasic extends StatelessWidget {
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final void Function()? onTap;
   final bool selected;
   final Widget? trailing;
+  final bool? isSubtitleEllipsis;
 
   const TileListBasic({
     super.key,
@@ -15,6 +16,7 @@ class TileListBasic extends StatelessWidget {
     this.onTap,
     this.selected = false,
     this.trailing,
+    this.isSubtitleEllipsis,
   });
 
   @override
@@ -30,7 +32,17 @@ class TileListBasic extends StatelessWidget {
           onTap: onTap,
           selected: selected,
           title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text(subtitle, style: TextStyle(fontSize: 12)),
+          subtitle:
+              subtitle != null
+                  ? Text(
+                    subtitle!,
+                    style: TextStyle(fontSize: 12),
+                    overflow:
+                        isSubtitleEllipsis == true
+                            ? TextOverflow.ellipsis
+                            : null,
+                  )
+                  : null,
           trailing: trailing,
         ),
       ),

@@ -18,7 +18,11 @@ class LecturerAvatar extends StatelessWidget {
       borderRadius: BorderRadius.circular(8),
       child:
           url != null
-              ? Image.network(url!, height: height, width: width)
+              ? Image.network(
+                "https://imagecdn.app/v1/images/${Uri.encodeComponent(url!)}?width=$width&height=$height",
+                height: height,
+                width: width,
+              )
               : Image.asset(
                 "assets/avatar-default.jpg",
                 height: height,

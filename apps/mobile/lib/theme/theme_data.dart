@@ -176,6 +176,8 @@ class AppThemeData {
       selectedColor: primary,
       side: BorderSide.none,
       checkmarkColor: Colors.white,
+      labelStyle: TextStyle(color: ChipLabelColor()),
+      iconTheme: IconThemeData(color: primary),
     );
 
     // Date & Time Picker
@@ -215,6 +217,11 @@ class AppThemeData {
       ),
     );
 
+    final bottomSheetTheme = BottomSheetThemeData(
+      backgroundColor: background,
+      dragHandleColor: primary,
+    );
+
     return ThemeData(
       fontFamily: "Lato",
       scaffoldBackgroundColor: background,
@@ -232,6 +239,21 @@ class AppThemeData {
       snackBarTheme: snackBarTheme,
       datePickerTheme: datePickerTheme,
       timePickerTheme: timePickerTheme,
+      bottomSheetTheme: bottomSheetTheme,
     );
+  }
+}
+
+class ChipLabelColor extends Color implements WidgetStateColor {
+  const ChipLabelColor() : super(_default);
+
+  static const int _default = 0xDD0F172B;
+
+  @override
+  Color resolve(Set<WidgetState> states) {
+    if (states.contains(WidgetState.selected)) {
+      return Colors.white;
+    }
+    return Color(0xDD0F172B);
   }
 }

@@ -49,7 +49,7 @@ AS $$
     event := jsonb_set(event, '{claims}', claims);
     RETURN event;
   END;
-$$;
+$$ SET search_path = public;
 
 GRANT usage ON SCHEMA public TO supabase_auth_admin;
 
@@ -168,10 +168,10 @@ CREATE TABLE public.class (
 );
 
 -- Computed field
-CREATE FUNCTION full_class_name(public.class)
+CREATE OR REPLACE FUNCTION full_class_name(public.class)
 RETURNS text AS $$
   SELECT $1.study_program_code || ' ' || $1.semester || $1.class_group || ' ' || $1.session_type;
-$$ LANGUAGE SQL;
+$$ LANGUAGE SQL SET search_path = public;
 
 -- RLS Class Table
 ALTER TABLE public.class ENABLE ROW LEVEL SECURITY;
@@ -513,7 +513,7 @@ BEGIN
 
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SET search_path = public;
 
 CREATE TRIGGER trigger_enforce_single_active_semester
 BEFORE INSERT OR UPDATE ON public.semester
@@ -592,3 +592,45 @@ CREATE VIEW my_schedules AS
 
 COMMENT ON VIEW my_schedules IS e'@graphql({"primary_key_columns": ["id"]})';
 
+-- View for not submitted task
+CREATE VIEW not_submitted_task AS
+    WITH student_info AS (
+        SELECT nim, class_id
+        FROM student
+        WHERE user_id = auth.uid()
+    ), current_semester AS (
+        SELECT id
+        FROM semester
+        WHERE is_active = true
+        LIMIT 1
+    )
+    SELECT
+        st.id,
+        st.title,
+        st.semester_id,
+        st.subject_id,
+        st.student_nim,
+        st.deadline,
+        st.created_at,
+        sb.name AS subject_name,
+        sb.code AS subject_code,
+        COALESCE(sts.status, 'pending') AS status
+    FROM subject_task st
+    CROSS JOIN student_info si
+    CROSS JOIN current_semester cs
+    JOIN subject sb
+        ON st.subject_id = sb.id
+    LEFT JOIN subject_task_student sts
+        ON sts.task_id = st.id
+        AND sts.student_nim = si.nim
+    WHERE COALESCE(sts.status, 'pending') IN ('pending', 'not_submitted')
+    ORDER BY
+        CASE COALESCE(sts.status, 'pending')
+            WHEN 'pending' THEN 1
+            WHEN 'not_submitted' THEN 2
+            ELSE 3
+        END,
+        deadline ASC,
+        created_at ASC;
+
+COMMENT ON VIEW not_submitted_task IS e'@graphql({"primary_key_columns": ["id"]})';
