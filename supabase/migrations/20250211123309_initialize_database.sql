@@ -421,6 +421,7 @@ CREATE TABLE public.subject_task (
     student_nim TEXT NOT NULL REFERENCES public.student(nim) ON UPDATE CASCADE ON DELETE CASCADE,
     learning_link VARCHAR(500) DEFAULT NULL,
     deadline TIMESTAMP DEFAULT NULL,
+    is_shared BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -606,6 +607,11 @@ WITH(security_invoker=true) AS
         FROM semester
         WHERE is_active = true
         LIMIT 1
+    ), my_subject_ids AS (
+        SELECT subject_id
+        FROM enrollment
+        WHERE semester_id = (SELECT id FROM current_semester)
+        AND student_nim = (SELECT nim FROM student_info)
     )
     SELECT
         st.id,
@@ -627,6 +633,14 @@ WITH(security_invoker=true) AS
         ON sts.task_id = st.id
         AND sts.student_nim = si.nim
     WHERE COALESCE(sts.status, 'pending') IN ('pending', 'not_submitted')
+        AND (
+            st.is_shared = true
+            AND st.subject_id IN (SELECT subject_id FROM my_subject_ids)
+            AND st.class_id = si.class_id
+        ) OR (
+            st.is_shared = false
+            AND st.student_nim = si.nim
+        )
     ORDER BY
         CASE COALESCE(sts.status, 'pending')
             WHEN 'pending' THEN 1

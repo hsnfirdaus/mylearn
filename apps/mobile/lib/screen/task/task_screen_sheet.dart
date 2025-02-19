@@ -3,6 +3,7 @@ import 'package:mylearn/components/form/custom_controller.dart';
 import 'package:mylearn/components/form/date_time_picker.dart';
 import 'package:mylearn/components/form/input_label.dart';
 import 'package:mylearn/components/form/select_my_subject.dart';
+import 'package:mylearn/components/form/switch_input.dart';
 import 'package:mylearn/components/toast.dart';
 import 'package:mylearn/models/user_provider.dart';
 import 'package:mylearn/theme/theme_extension.dart';
@@ -26,6 +27,9 @@ class _TaskScreenSheetState extends State<TaskScreenSheet> {
   final CustomController<Map<String, dynamic>> _subjectController =
       CustomController();
   final CustomController<DateTime> _deadlineController = CustomController();
+  final CustomController<bool> _isSharedController = CustomController(
+    value: true,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +55,7 @@ class _TaskScreenSheetState extends State<TaskScreenSheet> {
         "student_nim": userProvider.student!.nim,
         "learning_link": _linkController.text,
         "deadline": _deadlineController.value?.toIso8601String(),
+        "is_shared": _isSharedController.value == true,
       });
       if (res?.error == null) {
         widget.onSuccess();
@@ -114,6 +119,11 @@ class _TaskScreenSheetState extends State<TaskScreenSheet> {
                   label: "Link",
                   hintText: "(Opsional) https://learning-if.polibatam.ac.id/",
                   controller: _linkController,
+                ),
+                SizedBox(height: 12),
+                SwitchInput(
+                  label: "Bagian tugas ke teman sekelas",
+                  controller: _isSharedController,
                 ),
                 SizedBox(height: 12),
               ],

@@ -7,17 +7,19 @@ class FormLabel extends StatelessWidget {
     required this.label,
     this.isError = false,
     this.isFocused = false,
+    this.width = double.infinity,
   });
 
   final String label;
   final bool isError;
   final bool isFocused;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
     final theme = context.appTheme;
     return SizedBox(
-      width: double.infinity,
+      width: width,
       child: Text(
         label,
         style: TextStyle(

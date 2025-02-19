@@ -222,6 +222,21 @@ class AppThemeData {
       dragHandleColor: primary,
     );
 
+    final switchTheme = SwitchThemeData(
+      trackColor: WidgetStateProperty.fromMap({
+        WidgetState.selected: primary,
+        WidgetState.any: background200,
+      }),
+      trackOutlineWidth: WidgetStatePropertyAll(0),
+      trackOutlineColor: WidgetStatePropertyAll(Colors.transparent),
+      thumbColor: WidgetStateProperty.fromMap({
+        WidgetState.selected: backgroundLighest,
+        WidgetState.any: textTransparent,
+      }),
+      splashRadius: 0,
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    );
+
     return ThemeData(
       fontFamily: "Lato",
       scaffoldBackgroundColor: background,
@@ -242,6 +257,7 @@ class AppThemeData {
       bottomSheetTheme: bottomSheetTheme,
       splashFactory: NoSplash.splashFactory,
       indicatorColor: primary,
+      switchTheme: switchTheme,
     );
   }
 }
