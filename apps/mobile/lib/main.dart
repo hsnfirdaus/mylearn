@@ -39,6 +39,7 @@ Future main() async {
         data.event == AuthChangeEvent.signedOut ||
         data.event == AuthChangeEvent.userUpdated) {
       await userProvider.refreshStudent();
+      await userProvider.refreshSemester();
       router.refresh();
     }
   });

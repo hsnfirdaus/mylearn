@@ -23,7 +23,7 @@ class InputButton extends StatelessWidget {
         onPressed: onPressed,
         style: FilledButton.styleFrom(
           backgroundColor: theme.background200,
-          padding: EdgeInsets.symmetric(vertical: 24, horizontal: 14),
+          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 14),
           shape: RoundedRectangleBorder(
             side: BorderSide(
               color: isError == true ? theme.error : theme.background200,

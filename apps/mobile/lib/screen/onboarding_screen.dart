@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mylearn/components/form/custom_controller.dart';
 import 'package:mylearn/components/form/input_label.dart';
@@ -56,84 +57,105 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final theme = context.appTheme;
 
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(24),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image(
-                image: AssetImage('assets/icon.png'),
-                fit: BoxFit.contain,
-                width: 60,
-                height: 60,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: theme.background,
+      ),
+      child: Container(
+        color: theme.background,
+        child: SafeArea(
+          child: Scaffold(
+            body: Center(
+              child: ListView(
+                shrinkWrap: true,
+                padding: EdgeInsets.all(24),
+                children: [
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(height: MediaQuery.of(context).padding.top),
+                        Image(
+                          image: AssetImage('assets/icon.png'),
+                          fit: BoxFit.contain,
+                          width: 60,
+                          height: 60,
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          "Atur Akun Kamu",
+                          style: theme.heading2,
+                          textAlign: TextAlign.center,
+                        ),
+                        Text(
+                          "Isi data dirimu sebelum mulai menggunakan aplikasi",
+                          style: theme.bodyText,
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 24),
+                        InputLabel(
+                          label: "Nomor Induk Mahasiswa",
+                          hintText: "43xxxxxxx",
+                          controller: _nimController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "NIM tidak boleh kosong!";
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 12),
+                        InputLabel(
+                          label: "Nama Lengkap",
+                          hintText: "Masukkan Nama Anda...",
+                          controller: _nameController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Nama tidak boleh kosong!";
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 12),
+                        SelectClass(
+                          label: "Kelas",
+                          controller: _classController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Silahkan pilih kelas!";
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 24),
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Menyimpan Data'),
+                                  ),
+                                );
+                                doSubmit();
+                              }
+                            },
+                            child: Text(
+                              "Simpan Informasi",
+                              style: theme.buttonText,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 12),
-              Text(
-                "Atur Akun Kamu",
-                style: theme.heading2,
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                "Isi data dirimu sebelum mulai menggunakan aplikasi",
-                style: theme.bodyText,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 24),
-              InputLabel(
-                label: "Nomor Induk Mahasiswa",
-                hintText: "43xxxxxxx",
-                controller: _nimController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "NIM tidak boleh kosong!";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 12),
-              InputLabel(
-                label: "Nama Lengkap",
-                hintText: "Masukkan Nama Anda...",
-                controller: _nameController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Nama tidak boleh kosong!";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 12),
-              SelectClass(
-                label: "Kelas",
-                controller: _classController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Silahkan pilih kelas!";
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Menyimpan Data')),
-                      );
-                      doSubmit();
-                    }
-                  },
-                  child: Text("Simpan Informasi", style: theme.buttonText),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

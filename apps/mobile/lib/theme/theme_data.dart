@@ -56,7 +56,7 @@ class AppThemeData {
     final filledButtonStyle = FilledButton.styleFrom(
       backgroundColor: primary,
       foregroundColor: textLight,
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       splashFactory: NoSplash.splashFactory,
       elevation: 0,
@@ -67,7 +67,7 @@ class AppThemeData {
     final elevatedButtonStyle = FilledButton.styleFrom(
       backgroundColor: background200,
       foregroundColor: primary,
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       splashFactory: NoSplash.splashFactory,
       elevation: 0,

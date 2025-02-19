@@ -52,7 +52,7 @@ class _SettingSubjectSheetState extends State<SettingSubjectSheet> {
 
     final theme = context.appTheme;
     return Container(
-      height: 220,
+      height: 250,
       padding: EdgeInsets.only(left: 24, right: 24, bottom: 24),
       child: Form(
         key: _formKey,

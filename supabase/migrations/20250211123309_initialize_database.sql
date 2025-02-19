@@ -522,7 +522,8 @@ EXECUTE FUNCTION enforce_single_active_semester();
 
 
 -- View For Available Subject
-CREATE VIEW available_subjects AS
+CREATE OR REPLACE VIEW available_subjects
+WITH(security_invoker=true) AS
     WITH student_info AS (
         SELECT st.nim, c.semester, c.study_program_code
         FROM student st
@@ -550,7 +551,8 @@ COMMENT ON VIEW available_subjects IS e'@graphql({"primary_key_columns": ["id"]}
 
 
 -- View For Schedule
-CREATE VIEW my_schedules AS
+CREATE OR REPLACE VIEW my_schedules
+WITH(security_invoker=true) AS
     WITH student_info AS (
         SELECT class_id, nim
         FROM student
@@ -593,7 +595,8 @@ CREATE VIEW my_schedules AS
 COMMENT ON VIEW my_schedules IS e'@graphql({"primary_key_columns": ["id"]})';
 
 -- View for not submitted task
-CREATE VIEW not_submitted_task AS
+CREATE OR REPLACE VIEW not_submitted_task
+WITH(security_invoker=true) AS
     WITH student_info AS (
         SELECT nim, class_id
         FROM student

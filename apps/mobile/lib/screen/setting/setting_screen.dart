@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mylearn/helpers/google.dart';
 import 'package:mylearn/router.dart';
 import 'package:mylearn/theme/theme_extension.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.appTheme;
     return ListView(
       children: [
         SizedBox(height: 8),
@@ -17,7 +20,35 @@ class SettingScreen extends StatelessWidget {
           onTap: () => context.push(AppRoute.settingSubject),
           label: "Kelola Mata Kuliah",
         ),
-        ListItem(icon: LucideIcons.logOut, onTap: () => {}, label: "Keluar"),
+        ListItem(
+          icon: LucideIcons.logOut,
+          onTap: () async {
+            final result = await showDialog<bool>(
+              context: context,
+              builder:
+                  (BuildContext context) => AlertDialog(
+                    title: const Text('Apakah anda yakin?'),
+                    content: Text('Anda akan keluar dari akun anda!'),
+                    actions: <Widget>[
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Batal'),
+                      ),
+                      FilledButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        style: theme.deleteButton,
+                        child: const Text('Keluar'),
+                      ),
+                    ],
+                  ),
+            );
+            if (result == true) {
+              await googleSignIn.disconnect();
+              await Supabase.instance.client.auth.signOut();
+            }
+          },
+          label: "Keluar",
+        ),
       ],
     );
   }

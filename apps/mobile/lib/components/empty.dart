@@ -3,7 +3,10 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mylearn/theme/theme_extension.dart';
 
 class Empty extends StatelessWidget {
-  const Empty({super.key});
+  const Empty({super.key, this.icon, this.label});
+
+  final IconData? icon;
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +16,10 @@ class Empty extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(LucideIcons.meh, size: 80, color: theme.primary),
+          Icon(icon ?? LucideIcons.meh, size: 80, color: theme.primary),
           SizedBox(height: 12),
           Text(
-            "Tidak Ada Data!",
+            label ?? "Tidak Ada Data!",
             style: TextStyle(
               color: theme.primary,
               fontSize: 18,
