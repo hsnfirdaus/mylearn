@@ -33,7 +33,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   Widget build(BuildContext context) {
     final future = Supabase.instance.client
         .from("subject_task")
-        .select("*, subject(code, name)")
+        .select("*, subject(code, name), student(nim, name, user_id)")
         .eq("id", widget.subjectTaskId);
 
     final theme = context.appTheme;
@@ -97,6 +97,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               text: DateFormat.yMMMMd().add_Hm().format(
                                 DateTime.parse(taskItem['deadline']),
                               ),
+                            ),
+                          ),
+                        if (taskItem['student']?['name'] != null)
+                          SizedBox(
+                            width: double.infinity,
+                            child: TagIcon(
+                              icon: LucideIcons.user,
+                              text: taskItem['student']['name'],
                             ),
                           ),
                         if (taskItem['learning_link'] != null &&

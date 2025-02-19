@@ -43,10 +43,11 @@ class TaskItem extends StatelessWidget {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      TagIcon(
-                        icon: LucideIcons.target,
-                        text: countDown(item['deadline']),
-                      ),
+                      if (item['deadline'] != null)
+                        TagIcon(
+                          icon: LucideIcons.target,
+                          text: countDown(item['deadline']),
+                        ),
                       TagIcon(
                         icon: LucideIcons.bookType,
                         text: item['subject_code'],
