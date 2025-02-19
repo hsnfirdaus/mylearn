@@ -61,6 +61,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         systemNavigationBarColor: theme.background,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
       ),
       child: Container(
         color: theme.background,

@@ -1,0 +1,11 @@
+flutter_native_splash:
+  color: "#ffffff"
+  color_dark: "#020817"
+  branding: brand/company.png
+
+  android_12:
+    color: "#ffffff"
+    color_dark: "#020817"
+    branding: brand/company.png
+
+  android_gravity: center

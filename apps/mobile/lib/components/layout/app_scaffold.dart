@@ -19,6 +19,8 @@ class AppScaffold extends StatelessWidget {
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         systemNavigationBarColor: theme.background,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light,
       ),
       child: Container(
         color: theme.primary,

@@ -50,6 +50,8 @@ class LoginScreen extends StatelessWidget {
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         systemNavigationBarColor: theme.background,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
       ),
       child: Container(
         color: theme.background,
