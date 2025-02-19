@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mylearn/components/app_alert_dialog.dart';
+import 'package:mylearn/components/bottom_sheet.dart';
 import 'package:mylearn/components/empty.dart';
 import 'package:mylearn/components/tile_list_basic.dart';
+import 'package:mylearn/components/toast.dart';
 import 'package:mylearn/models/user_provider.dart';
 import 'package:mylearn/screen/setting/subject/setting_subject_sheet.dart';
 import 'package:mylearn/theme/theme_extension.dart';
@@ -20,21 +23,18 @@ class _SettingSubjectScreenState extends State<SettingSubjectScreen> {
   Widget build(BuildContext context) {
     final theme = context.appTheme;
 
-    showSnackBar(String message) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+    showMessage(String message) {
+      context.toast(message);
     }
 
     Future<void> showDeleteDialog(Map<String, dynamic> item) async {
       final result = await showDialog<bool>(
         context: context,
         builder:
-            (BuildContext context) => AlertDialog(
-              title: const Text('Apakah anda yakin?'),
-              content: Text(
-                'Mata kuliah ${item['subject']['name']} akan dihapus dari akun anda!',
-              ),
+            (BuildContext context) => AppAlertDialog(
+              title: 'Apakah anda yakin?',
+              content:
+                  'Mata kuliah ${item['subject']['name']} akan dihapus dari akun anda!',
               actions: <Widget>[
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context, false),
@@ -56,16 +56,15 @@ class _SettingSubjectScreenState extends State<SettingSubjectScreen> {
             .eq("semester_id", item['semester_id'])
             .eq("subject_id", item['subject']['id']);
         if (res?.error == null) {
-          showSnackBar('Mata kuliah dihapus...');
+          showMessage('Mata kuliah dihapus...');
           setState(() {});
         }
       }
     }
 
     Future<void> showAddBottomSheet() {
-      return showModalBottomSheet<void>(
+      return showDynamicBottomSheet<void>(
         context: context,
-        showDragHandle: true,
         useRootNavigator: true,
         builder: (BuildContext context) {
           return SettingSubjectSheet(

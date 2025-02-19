@@ -30,7 +30,6 @@ class ChoicePicker extends FormField<String> {
                  width: double.infinity,
                  child: Wrap(
                    spacing: 8,
-                   runSpacing: 8,
                    alignment: WrapAlignment.start,
                    children:
                        items.map((item) {

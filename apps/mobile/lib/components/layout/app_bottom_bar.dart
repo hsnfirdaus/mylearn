@@ -67,7 +67,7 @@ class AppBottomBar extends StatelessWidget {
                   icon: LucideIcons.house,
                   label: "Beranda",
                   isActive: activeItem == AppRoute.home,
-                  onTap: () => navigate(AppRoute.home),
+                  onTap: () => context.go(AppRoute.home),
                 ),
                 NavItem(
                   icon: LucideIcons.book,

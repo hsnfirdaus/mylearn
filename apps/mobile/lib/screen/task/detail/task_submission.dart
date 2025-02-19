@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mylearn/components/bottom_sheet.dart';
 import 'package:mylearn/helpers/format.dart';
 import 'package:mylearn/screen/task/detail/task_submission_sheet.dart';
 import 'package:mylearn/theme/theme_extension.dart';
@@ -66,9 +67,8 @@ class _TaskSubmissionState extends State<TaskSubmission> {
           }
 
           Future<void> showBottomSheet() {
-            return showModalBottomSheet<void>(
+            return showDynamicBottomSheet<void>(
               context: context,
-              showDragHandle: true,
               useRootNavigator: true,
               builder: (BuildContext context) {
                 return TaskSubmissionSheet(

@@ -17,7 +17,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
           child: DaySlider(
             activeDayOfWeek: dayOfWeek,
             onPress: (newWeekday) {
@@ -27,7 +27,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             },
           ),
         ),
-        ScheduleList(weekday: dayOfWeek),
+        Expanded(child: ScheduleList(weekday: dayOfWeek)),
       ],
     );
   }

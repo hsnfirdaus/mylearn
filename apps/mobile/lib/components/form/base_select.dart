@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mylearn/components/bottom_sheet.dart';
 import 'package:mylearn/components/form/base_select_sheet.dart';
 import 'package:mylearn/components/form/custom_controller.dart';
 import 'package:mylearn/components/form/error_text.dart';
@@ -39,11 +40,11 @@ class BaseSelect<T> extends FormField<T> {
            }
 
            Future<void> onPressed() {
-             return showModalBottomSheet<void>(
+             return showDynamicBottomSheet<void>(
                context: state.context,
-               showDragHandle: true,
-               isScrollControlled: true,
                useRootNavigator: true,
+               expand: true,
+               isDisableContainer: true,
                builder: (BuildContext context) {
                  return BaseSelectSheet(
                    fetchFn: fetchFn,

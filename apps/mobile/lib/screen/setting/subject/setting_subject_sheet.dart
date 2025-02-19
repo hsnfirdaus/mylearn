@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mylearn/components/form/custom_controller.dart';
 import 'package:mylearn/components/form/select_available_subject.dart';
+import 'package:mylearn/components/toast.dart';
 import 'package:mylearn/models/user_provider.dart';
 import 'package:mylearn/theme/theme_extension.dart';
 import 'package:provider/provider.dart';
@@ -24,9 +25,7 @@ class _SettingSubjectSheetState extends State<SettingSubjectSheet> {
   @override
   Widget build(BuildContext context) {
     void showError(String message) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      context.errorToast(message);
     }
 
     void closeSheet() {
@@ -51,9 +50,8 @@ class _SettingSubjectSheetState extends State<SettingSubjectSheet> {
     }
 
     final theme = context.appTheme;
-    return Container(
-      height: 250,
-      padding: EdgeInsets.only(left: 24, right: 24, bottom: 24),
+    return Padding(
+      padding: EdgeInsets.all(24),
       child: Form(
         key: _formKey,
         child: Column(
@@ -61,17 +59,15 @@ class _SettingSubjectSheetState extends State<SettingSubjectSheet> {
           children: [
             Text('Tambah Mata Kuliah', style: theme.heading3),
             SizedBox(height: 12),
-            Expanded(
-              child: SelectAvailableSubject(
-                label: "Pilih Mata Kuliah",
-                controller: _subjectController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Silahkan pilih mata kuliah!";
-                  }
-                  return null;
-                },
-              ),
+            SelectAvailableSubject(
+              label: "Pilih Mata Kuliah",
+              controller: _subjectController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Silahkan pilih mata kuliah!";
+                }
+                return null;
+              },
             ),
             SizedBox(height: 12),
             Row(
@@ -87,11 +83,7 @@ class _SettingSubjectSheetState extends State<SettingSubjectSheet> {
                   child: FilledButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Menambahkan mata kuliah...'),
-                          ),
-                        );
+                        context.toast('Menambahkan mata kuliah...');
                         doSubmit();
                       }
                     },

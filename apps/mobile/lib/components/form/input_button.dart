@@ -45,6 +45,7 @@ class InputButton extends StatelessWidget {
                     fontWeight: FontWeight.normal,
                     fontSize: 14,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Icon(LucideIcons.chevronRight, color: theme.textPlaceholder),

@@ -3,6 +3,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mylearn/components/form/choice_picker.dart';
 import 'package:mylearn/components/form/custom_controller.dart';
 import 'package:mylearn/components/form/input_label.dart';
+import 'package:mylearn/components/toast.dart';
 import 'package:mylearn/helpers/format.dart';
 import 'package:mylearn/models/user_provider.dart';
 import 'package:mylearn/theme/theme_extension.dart';
@@ -39,9 +40,7 @@ class _TaskSubmissionSheetState extends State<TaskSubmissionSheet> {
   @override
   Widget build(BuildContext context) {
     void showError(String message) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      context.errorToast(message);
     }
 
     void closeSheet() {
@@ -69,56 +68,52 @@ class _TaskSubmissionSheetState extends State<TaskSubmissionSheet> {
     }
 
     final theme = context.appTheme;
-    return Container(
-      height: 330,
-      padding: EdgeInsets.only(left: 24, right: 24, bottom: 24),
+    return Padding(
+      padding: EdgeInsets.all(24),
       child: Form(
         key: _formKey,
         child: Column(
-          mainAxisSize: MainAxisSize.max,
           children: [
             Text('Ubah Pengerjaan', style: theme.heading3),
             SizedBox(height: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ChoicePicker(
-                    label: "Status",
-                    controller: _statusController,
-                    items: [
-                      ChoicePickerItem(
-                        icon: LucideIcons.circleAlert,
-                        value: "pending",
-                        label: taskStatus("pending"),
-                      ),
-                      ChoicePickerItem(
-                        icon: LucideIcons.clock,
-                        value: "not_submitted",
-                        label: taskStatus("not_submitted"),
-                      ),
-                      ChoicePickerItem(
-                        icon: LucideIcons.fileCheck,
-                        value: "submitted",
-                        label: taskStatus("submitted"),
-                      ),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Status tidak boleh kosong!";
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 12),
-                  InputLabel(
-                    label: "Catatan",
-                    hintText: "(Opsional)",
-                    controller: _noteController,
-                  ),
-                  SizedBox(height: 12),
-                ],
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ChoicePicker(
+                  label: "Status",
+                  controller: _statusController,
+                  items: [
+                    ChoicePickerItem(
+                      icon: LucideIcons.circleAlert,
+                      value: "pending",
+                      label: taskStatus("pending"),
+                    ),
+                    ChoicePickerItem(
+                      icon: LucideIcons.clock,
+                      value: "not_submitted",
+                      label: taskStatus("not_submitted"),
+                    ),
+                    ChoicePickerItem(
+                      icon: LucideIcons.fileCheck,
+                      value: "submitted",
+                      label: taskStatus("submitted"),
+                    ),
+                  ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Status tidak boleh kosong!";
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 12),
+                InputLabel(
+                  label: "Catatan",
+                  hintText: "(Opsional)",
+                  controller: _noteController,
+                ),
+                SizedBox(height: 12),
+              ],
             ),
             SizedBox(height: 12),
             Row(
@@ -134,11 +129,7 @@ class _TaskSubmissionSheetState extends State<TaskSubmissionSheet> {
                   child: FilledButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Menyimpan pengerjaan...'),
-                          ),
-                        );
+                        context.toast('Menyimpan pengerjaan...');
                         doSubmit();
                       }
                     },

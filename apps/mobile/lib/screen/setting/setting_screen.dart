@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mylearn/components/app_alert_dialog.dart';
 import 'package:mylearn/helpers/google.dart';
 import 'package:mylearn/router.dart';
 import 'package:mylearn/theme/theme_extension.dart';
@@ -26,9 +27,9 @@ class SettingScreen extends StatelessWidget {
             final result = await showDialog<bool>(
               context: context,
               builder:
-                  (BuildContext context) => AlertDialog(
-                    title: const Text('Apakah anda yakin?'),
-                    content: Text('Anda akan keluar dari akun anda!'),
+                  (BuildContext context) => AppAlertDialog(
+                    title: 'Apakah anda yakin?',
+                    content: 'Anda akan keluar dari akun anda!',
                     actions: <Widget>[
                       ElevatedButton(
                         onPressed: () => Navigator.pop(context, false),

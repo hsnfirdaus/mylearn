@@ -240,6 +240,8 @@ class AppThemeData {
       datePickerTheme: datePickerTheme,
       timePickerTheme: timePickerTheme,
       bottomSheetTheme: bottomSheetTheme,
+      splashFactory: NoSplash.splashFactory,
+      indicatorColor: primary,
     );
   }
 }

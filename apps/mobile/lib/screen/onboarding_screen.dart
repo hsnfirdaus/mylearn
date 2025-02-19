@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mylearn/components/form/custom_controller.dart';
 import 'package:mylearn/components/form/input_label.dart';
 import 'package:mylearn/components/form/select_class.dart';
+import 'package:mylearn/components/toast.dart';
 import 'package:mylearn/router.dart';
 import 'package:mylearn/theme/theme_extension.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -48,9 +49,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void showError(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    context.errorToast(message);
   }
 
   @override
@@ -138,11 +137,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: FilledButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Menyimpan Data'),
-                                  ),
-                                );
+                                context.toast('Menyimpan Data...');
                                 doSubmit();
                               }
                             },

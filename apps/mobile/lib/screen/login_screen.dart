@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mylearn/components/toast.dart';
 import 'package:mylearn/helpers/google.dart';
 import 'package:mylearn/theme/theme_extension.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -17,9 +18,7 @@ class LoginScreen extends StatelessWidget {
     final theme = context.appTheme;
 
     void showError(String message) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      context.errorToast(message);
     }
 
     Future doSignIn() async {
@@ -60,15 +59,16 @@ class LoginScreen extends StatelessWidget {
             body: Container(
               padding: EdgeInsets.all(24),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image(
-                        image: AssetImage('assets/illustration.jpeg'),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                      ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image(
+                      image: AssetImage('assets/icon.png'),
+                      fit: BoxFit.contain,
+                      width: 100,
+                      height: 100,
                     ),
                   ),
                   SizedBox(height: 24),
