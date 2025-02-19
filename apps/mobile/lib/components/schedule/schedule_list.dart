@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:mylearn/components/schedule_item.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class TodaySchedule extends StatelessWidget {
-  TodaySchedule({super.key});
+class ScheduleList extends StatelessWidget {
+  final int weekday;
 
-  final DateTime now = DateTime.now();
+  const ScheduleList({super.key, required this.weekday});
 
   @override
   Widget build(BuildContext context) {
     final future = Supabase.instance.client
         .from("my_schedules")
         .select("*")
-        .eq("day_of_week", now.weekday)
+        .eq("day_of_week", weekday)
         .order("start_time", ascending: true);
 
     return FutureBuilder(
