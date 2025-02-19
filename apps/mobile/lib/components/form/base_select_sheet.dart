@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mylearn/components/empty.dart';
+import 'package:mylearn/components/show_error.dart';
 import 'package:mylearn/theme/theme_extension.dart';
 
 class BaseSelectSheet<T> extends StatefulWidget {
@@ -69,6 +70,9 @@ class _BaseSelectSheetState<T> extends State<BaseSelectSheet<T>> {
               child: FutureBuilder(
                 future: widget.fetchFn(context, _searchTerm),
                 builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return ShowError(label: snapshot.error.toString());
+                  }
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
                   }

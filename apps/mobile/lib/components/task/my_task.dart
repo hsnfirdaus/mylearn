@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mylearn/components/empty.dart';
+import 'package:mylearn/components/show_error.dart';
 import 'package:mylearn/components/task/task_item.dart';
 import 'package:mylearn/models/user_provider.dart';
 import 'package:mylearn/router.dart';
@@ -25,6 +26,9 @@ class MyTask extends StatelessWidget {
         return FutureBuilder(
           future: future,
           builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return ShowError(label: snapshot.error.toString());
+            }
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }

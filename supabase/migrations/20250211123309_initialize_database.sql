@@ -42,7 +42,7 @@ AS $$
     IF user_roles IS NOT NULL THEN
       claims := jsonb_set(claims, '{user_roles}', user_roles);
     ELSE
-      claims := jsonb_set(claims, '{user_roles}', 'null');
+      claims := jsonb_set(claims, '{user_roles}', '["student"]');
     END IF;
 
     -- Update the 'claims' object in the original event
@@ -427,9 +427,17 @@ CREATE TABLE public.subject_task (
 
 -- RLS Subject Task Table
 ALTER TABLE public.subject_task ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "student can manage their own subject task"
-    ON public.subject_task
-    FOR ALL
+CREATE POLICY "student select for authenticated"
+    ON public.subject_task FOR SELECT
+    TO authenticated
+    USING ( 
+        EXISTS (
+            SELECT 1 FROM public.student
+            WHERE student.class_id = subject_task.class_id
+        )
+    );
+CREATE POLICY "student update for same user_id"
+    ON public.subject_task FOR UPDATE
     TO authenticated
     USING (
         EXISTS (
@@ -440,6 +448,28 @@ CREATE POLICY "student can manage their own subject task"
         )
     )
     WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM public.student
+            WHERE student.class_id = subject_task.class_id
+            AND student.nim = subject_task.student_nim
+            AND student.user_id = auth.uid()
+        )
+    );
+CREATE POLICY "student insert their own subject_task"
+    ON public.subject_task FOR INSERT
+    TO authenticated
+    WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM public.student
+            WHERE student.class_id = subject_task.class_id
+            AND student.nim = subject_task.student_nim
+            AND student.user_id = auth.uid()
+        )
+    );
+CREATE POLICY "student delete for their own subject_task"
+    ON public.subject_task FOR SELECT
+    TO authenticated
+    USING ( 
         EXISTS (
             SELECT 1 FROM public.student
             WHERE student.class_id = subject_task.class_id
@@ -610,8 +640,8 @@ WITH(security_invoker=true) AS
     ), my_subject_ids AS (
         SELECT subject_id
         FROM enrollment
-        WHERE semester_id = (SELECT id FROM current_semester)
-        AND student_nim = (SELECT nim FROM student_info)
+        WHERE semester_id IN (SELECT id FROM current_semester)
+        AND student_nim IN (SELECT nim FROM student_info)
     )
     SELECT
         st.id,

@@ -3,6 +3,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mylearn/components/app_alert_dialog.dart';
 import 'package:mylearn/components/bottom_sheet.dart';
 import 'package:mylearn/components/empty.dart';
+import 'package:mylearn/components/show_error.dart';
 import 'package:mylearn/components/tile_list_basic.dart';
 import 'package:mylearn/components/toast.dart';
 import 'package:mylearn/models/user_provider.dart';
@@ -90,6 +91,9 @@ class _SettingSubjectScreenState extends State<SettingSubjectScreen> {
             return FutureBuilder(
               future: future,
               builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return ShowError(label: snapshot.error.toString());
+                }
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
                 }

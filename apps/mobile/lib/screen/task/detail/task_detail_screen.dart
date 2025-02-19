@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mylearn/components/empty.dart';
+import 'package:mylearn/components/show_error.dart';
 import 'package:mylearn/components/tag_icon.dart';
 import 'package:mylearn/models/user_provider.dart';
 import 'package:mylearn/screen/task/detail/task_submission.dart';
@@ -40,6 +41,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     return FutureBuilder(
       future: future,
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return ShowError(label: snapshot.error.toString());
+        }
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }

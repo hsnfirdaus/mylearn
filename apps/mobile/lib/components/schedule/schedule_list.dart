@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mylearn/components/schedule_item.dart';
+import 'package:mylearn/components/show_error.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ScheduleList extends StatelessWidget {
@@ -18,6 +19,9 @@ class ScheduleList extends StatelessWidget {
     return FutureBuilder(
       future: future,
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return ShowError(label: snapshot.error.toString());
+        }
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }

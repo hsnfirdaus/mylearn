@@ -44,7 +44,11 @@ class SettingScreen extends StatelessWidget {
                   ),
             );
             if (result == true) {
-              await googleSignIn.disconnect();
+              try {
+                await googleSignIn.disconnect();
+                // ignore: empty_catches
+              } catch (e) {}
+
               await Supabase.instance.client.auth.signOut();
             }
           },
