@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mylearn/components/app_alert_dialog.dart';
+import 'package:mylearn/components/bottom_sheet.dart';
 import 'package:mylearn/components/empty.dart';
 import 'package:mylearn/components/show_error.dart';
 import 'package:mylearn/components/tag_icon.dart';
+import 'package:mylearn/components/toast.dart';
+import 'package:mylearn/models/app_bar_provider.dart';
 import 'package:mylearn/models/user_provider.dart';
 import 'package:mylearn/screen/task/detail/task_submission.dart';
+import 'package:mylearn/screen/task/task_screen_sheet.dart';
 import 'package:mylearn/theme/theme_extension.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -21,6 +28,14 @@ class TaskDetailScreen extends StatefulWidget {
 }
 
 class _TaskDetailScreenState extends State<TaskDetailScreen> {
+  late AppBarProvider appBarProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    appBarProvider = Provider.of<AppBarProvider>(context, listen: false);
+  }
+
   Future<void> _launchUrl(String url) async {
     final Uri parsedUrl = Uri.parse(url);
 
@@ -30,16 +45,101 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final future = Supabase.instance.client
+  void dispose() {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      appBarProvider.resetActions();
+    });
+    super.dispose();
+  }
+
+  onDeleteSuccess() {
+    context.toast('Tugas berhasil dihapus...');
+    context.pop();
+  }
+
+  void handleTask(Map<String, dynamic> task) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    if (task['student']['nim'] == userProvider.student!.nim) {
+      appBarProvider.updateActions([
+        MenuAnchor(
+          menuChildren: [
+            MenuItemButton(
+              child: Text("Edit Tugas"),
+              onPressed: () {
+                showDynamicBottomSheet<void>(
+                  context: context,
+                  useRootNavigator: true,
+                  builder: (BuildContext context) {
+                    return TaskScreenSheet(
+                      isEdit: true,
+                      oldValue: task,
+                      onSuccess: () {
+                        setState(() {});
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+            MenuItemButton(
+              child: Text("Hapus Tugas"),
+              onPressed: () async {
+                final result = await showDeleteDialog(
+                  context: context,
+                  content:
+                      'Tugas ini akan dihapus dan tidak dapat dikembalikan lagi!',
+                );
+                if (result == true) {
+                  final res = await Supabase.instance.client
+                      .from("subject_task")
+                      .delete()
+                      .eq("id", task['id']);
+                  if (res?.error == null) {
+                    onDeleteSuccess();
+                  }
+                }
+              },
+            ),
+          ],
+          builder: (context, controller, child) {
+            return IconButton(
+              onPressed: () {
+                if (controller.isOpen) {
+                  controller.close();
+                } else {
+                  controller.open();
+                }
+              },
+              icon: Icon(LucideIcons.ellipsisVertical),
+            );
+          },
+        ),
+      ]);
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchTask() async {
+    final tasks = await Supabase.instance.client
         .from("subject_task")
-        .select("*, subject(code, name), student(nim, name, user_id)")
+        .select("*, subject(id, code, name), student(nim, name, user_id)")
         .eq("id", widget.subjectTaskId);
 
+    if (tasks.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        handleTask(tasks.first);
+      });
+    }
+
+    return tasks;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = context.appTheme;
 
     return FutureBuilder(
-      future: future,
+      future: fetchTask(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return ShowError(label: snapshot.error.toString());
@@ -94,7 +194,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                             width: double.infinity,
                             child: TagIcon(
                               icon: LucideIcons.calendar,
-                              text: DateFormat.yMMMMd().add_Hm().format(
+                              text: DateFormat.yMMMMEEEEd().add_Hm().format(
                                 DateTime.parse(taskItem['deadline']),
                               ),
                             ),
@@ -107,6 +207,16 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               text: taskItem['student']['name'],
                             ),
                           ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: TagIcon(
+                            icon: LucideIcons.share2,
+                            text:
+                                taskItem['is_shared'] == true
+                                    ? "Dibagikan dengan Teman"
+                                    : "Tidak Dibagikan",
+                          ),
+                        ),
                         if (taskItem['learning_link'] != null &&
                             taskItem['learning_link'] != "")
                           Padding(

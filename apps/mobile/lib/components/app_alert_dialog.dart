@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mylearn/theme/theme_extension.dart';
 
 class AppAlertDialog extends StatelessWidget {
   const AppAlertDialog({
@@ -31,4 +32,30 @@ class AppAlertDialog extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<bool?> showDeleteDialog({
+  required BuildContext context,
+  String? title,
+  required String content,
+}) {
+  return showDialog<bool>(
+    context: context,
+    builder:
+        (BuildContext context) => AppAlertDialog(
+          title: title ?? 'Apakah anda yakin?',
+          content: content,
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Batal'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              style: context.appTheme.deleteButton,
+              child: const Text('Hapus'),
+            ),
+          ],
+        ),
+  );
 }

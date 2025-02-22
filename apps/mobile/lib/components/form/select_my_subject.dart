@@ -13,9 +13,7 @@ class SelectMySubject extends BaseSelect<Map<String, dynamic>> {
     super.validator,
     super.controller,
   }) : super(
-         renderValue:
-             (value) =>
-                 '[${value['subject']['code']}] ${value['subject']['name']}',
+         renderValue: (value) => '[${value['code']}] ${value['name']}',
          placeholder: "Pilih Mata Kuliah",
          fetchFn: (BuildContext context, String search) async {
            final userProvider = Provider.of<UserProvider>(
@@ -40,14 +38,17 @@ class SelectMySubject extends BaseSelect<Map<String, dynamic>> {
            final res = await query
                .limit(20)
                .order('subject(code)', ascending: true);
-           return res;
+
+           return res
+               .map((item) => item['subject'] as Map<String, dynamic>)
+               .toList();
          },
          buildItem: (context, item, index, currentValue, onSelect) {
            return TileListBasic(
              onTap: onSelect,
-             selected: item['subject']['id'] == currentValue?['subject']['id'],
-             title: item['subject']['name'],
-             subtitle: item['subject']['code'],
+             selected: item['id'] == currentValue?['id'],
+             title: item['name'],
+             subtitle: item['code'],
            );
          },
        );
@@ -55,6 +56,6 @@ class SelectMySubject extends BaseSelect<Map<String, dynamic>> {
 
 extension SelectMySubjectController on CustomController<Map<String, dynamic>> {
   String? get subjectId {
-    return value?['subject']['id'];
+    return value?['id'];
   }
 }

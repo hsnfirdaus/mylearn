@@ -28,6 +28,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final CustomController<Map<String, dynamic>> _classController =
       CustomController();
 
+  @override
+  void dispose() {
+    _nimController.dispose();
+    _nameController.dispose();
+    super.dispose();
+  }
+
   Future doSubmit() async {
     final res = await supabase.from("student").upsert({
       'nim': _nimController.text,

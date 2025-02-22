@@ -12,7 +12,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class MyTask extends StatelessWidget {
   final int limit;
   final double? topPadding;
-  const MyTask({super.key, required this.limit, this.topPadding});
+  final double? bottomPadding;
+  const MyTask({
+    super.key,
+    required this.limit,
+    this.topPadding,
+    this.bottomPadding,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +53,7 @@ class MyTask extends StatelessWidget {
                 left: 24,
                 right: 24,
                 top: topPadding ?? 0,
+                bottom: bottomPadding ?? 0,
               ),
               itemBuilder: (context, index) {
                 final item = subjects[index];

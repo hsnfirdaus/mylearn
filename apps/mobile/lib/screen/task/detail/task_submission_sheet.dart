@@ -38,6 +38,12 @@ class _TaskSubmissionSheetState extends State<TaskSubmissionSheet> {
   );
 
   @override
+  void dispose() {
+    _noteController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     void showError(String message) {
       context.errorToast(message);

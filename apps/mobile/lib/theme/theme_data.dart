@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class AppThemeData {
@@ -42,6 +44,10 @@ class AppThemeData {
   ButtonStyle get deleteButton => ButtonStyle(
     backgroundColor: WidgetStateColor.fromMap({WidgetState.any: error}),
   );
+  EdgeInsets get buttonPadding => EdgeInsets.symmetric(
+    vertical: Platform.isLinux ? 24 : 16,
+    horizontal: 20,
+  );
 
   // Material Theme
   ThemeData get materialTheme {
@@ -56,7 +62,7 @@ class AppThemeData {
     final filledButtonStyle = FilledButton.styleFrom(
       backgroundColor: primary,
       foregroundColor: textLight,
-      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+      padding: buttonPadding,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       splashFactory: NoSplash.splashFactory,
       elevation: 0,
@@ -67,7 +73,7 @@ class AppThemeData {
     final elevatedButtonStyle = FilledButton.styleFrom(
       backgroundColor: background200,
       foregroundColor: primary,
-      padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+      padding: buttonPadding,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       splashFactory: NoSplash.splashFactory,
       elevation: 0,
@@ -237,6 +243,26 @@ class AppThemeData {
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     );
 
+    // Menu
+    final menuTheme = MenuBarThemeData(
+      style: MenuStyle(
+        backgroundColor: WidgetStatePropertyAll(background),
+        elevation: WidgetStatePropertyAll(0),
+        side: WidgetStatePropertyAll(BorderSide(color: background200)),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
+    );
+    final menuButtonTheme = MenuButtonThemeData(
+      style: ButtonStyle(
+        padding: WidgetStatePropertyAll(EdgeInsets.all(24)),
+        textStyle: WidgetStatePropertyAll(
+          TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+
     return ThemeData(
       fontFamily: "Lato",
       scaffoldBackgroundColor: background,
@@ -258,6 +284,8 @@ class AppThemeData {
       splashFactory: NoSplash.splashFactory,
       indicatorColor: primary,
       switchTheme: switchTheme,
+      menuTheme: menuTheme,
+      menuButtonTheme: menuButtonTheme,
     );
   }
 }

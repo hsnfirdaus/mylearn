@@ -33,6 +33,12 @@ class _BaseSelectSheetState<T> extends State<BaseSelectSheet<T>> {
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = context.appTheme;
 

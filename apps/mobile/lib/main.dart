@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:mylearn/models/app_bar_provider.dart';
 import 'package:mylearn/models/user_provider.dart';
 import 'package:mylearn/router.dart';
 import 'package:mylearn/theme/theme_data.dart';
@@ -49,6 +50,7 @@ Future main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => userProvider),
         Provider(create: (context) => AppThemeData()),
+        ChangeNotifierProvider(create: (context) => AppBarProvider()),
       ],
       child: MyApp(router: router),
     ),

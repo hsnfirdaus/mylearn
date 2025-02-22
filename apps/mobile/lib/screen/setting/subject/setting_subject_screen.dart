@@ -28,26 +28,11 @@ class _SettingSubjectScreenState extends State<SettingSubjectScreen> {
       context.toast(message);
     }
 
-    Future<void> showDeleteDialog(Map<String, dynamic> item) async {
-      final result = await showDialog<bool>(
+    Future<void> doDelete(Map<String, dynamic> item) async {
+      final result = await showDeleteDialog(
         context: context,
-        builder:
-            (BuildContext context) => AppAlertDialog(
-              title: 'Apakah anda yakin?',
-              content:
-                  'Mata kuliah ${item['subject']['name']} akan dihapus dari akun anda!',
-              actions: <Widget>[
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Batal'),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  style: theme.deleteButton,
-                  child: const Text('Hapus'),
-                ),
-              ],
-            ),
+        content:
+            'Mata kuliah ${item['subject']['name']} akan dihapus dari akun anda!',
       );
       if (result == true) {
         final res = await Supabase.instance.client
@@ -117,7 +102,7 @@ class _SettingSubjectScreenState extends State<SettingSubjectScreen> {
                       title: item['subject']['name'],
                       subtitle: item['subject']['code'],
                       trailing: IconButton(
-                        onPressed: () => showDeleteDialog(item),
+                        onPressed: () => doDelete(item),
                         icon: Icon(LucideIcons.trash),
                         color: theme.error,
                       ),

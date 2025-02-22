@@ -5,6 +5,7 @@ import 'package:mylearn/components/form/input_label.dart';
 import 'package:mylearn/components/form/select_my_subject.dart';
 import 'package:mylearn/components/form/switch_input.dart';
 import 'package:mylearn/components/toast.dart';
+import 'package:mylearn/helpers/validator.dart';
 import 'package:mylearn/models/user_provider.dart';
 import 'package:mylearn/theme/theme_extension.dart';
 import 'package:provider/provider.dart';
@@ -12,8 +13,15 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TaskScreenSheet extends StatefulWidget {
   final void Function() onSuccess;
+  final bool isEdit;
+  final Map<String, dynamic>? oldValue;
 
-  const TaskScreenSheet({super.key, required this.onSuccess});
+  const TaskScreenSheet({
+    super.key,
+    required this.onSuccess,
+    this.isEdit = false,
+    this.oldValue,
+  });
 
   @override
   State<TaskScreenSheet> createState() => _TaskScreenSheetState();
@@ -21,15 +29,46 @@ class TaskScreenSheet extends StatefulWidget {
 
 class _TaskScreenSheetState extends State<TaskScreenSheet> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _linkController = TextEditingController();
-  final CustomController<Map<String, dynamic>> _subjectController =
-      CustomController();
-  final CustomController<DateTime> _deadlineController = CustomController();
-  final CustomController<bool> _isSharedController = CustomController(
-    value: true,
-  );
+  late TextEditingController _titleController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _learningLink;
+  late CustomController<Map<String, dynamic>> _subjectController;
+  late CustomController<DateTime> _deadlineController;
+  late CustomController<bool> _isSharedController;
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _learningLink.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.oldValue?['title']);
+    _descriptionController = TextEditingController(
+      text: widget.oldValue?['description'],
+    );
+    _learningLink = TextEditingController(
+      text: widget.oldValue?['learning_link'],
+    );
+    _subjectController = CustomController(value: widget.oldValue?['subject']);
+    _deadlineController = CustomController(
+      value:
+          widget.oldValue?['deadline'] != null
+              ? DateTime.parse(widget.oldValue?['deadline'])
+              : null,
+    );
+    _isSharedController = CustomController(
+      value:
+          widget.oldValue?['is_shared'] != null
+              ? widget.oldValue!['is_shared']
+              : true,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,17 +85,27 @@ class _TaskScreenSheetState extends State<TaskScreenSheet> {
 
       final userProvider = Provider.of<UserProvider>(context, listen: false);
 
-      final res = await supabase.from("subject_task").insert({
+      final Map<dynamic, dynamic> dto = {
         "title": _titleController.text,
         "description": _descriptionController.text,
         "semester_id": userProvider.semester!.id,
         "subject_id": _subjectController.subjectId,
         "class_id": userProvider.student!.classId,
         "student_nim": userProvider.student!.nim,
-        "learning_link": _linkController.text,
+        "learning_link": _learningLink.text,
         "deadline": _deadlineController.value?.toIso8601String(),
         "is_shared": _isSharedController.value == true,
-      });
+      };
+      late dynamic res;
+
+      if (widget.isEdit) {
+        res = await supabase
+            .from("subject_task")
+            .update(dto)
+            .eq("id", widget.oldValue!['id']);
+      } else {
+        res = await supabase.from("subject_task").insert(dto);
+      }
       if (res?.error == null) {
         widget.onSuccess();
         closeSheet();
@@ -73,7 +122,10 @@ class _TaskScreenSheetState extends State<TaskScreenSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            Text('Tambah Tugas', style: theme.heading3),
+            Text(
+              widget.isEdit ? "Edit Tugas" : 'Tambah Tugas',
+              style: theme.heading3,
+            ),
             SizedBox(height: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -93,12 +145,7 @@ class _TaskScreenSheetState extends State<TaskScreenSheet> {
                   label: "Judul",
                   hintText: "Tugas Minggu 2 PBD",
                   controller: _titleController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Judul tidak boleh kosong!";
-                    }
-                    return null;
-                  },
+                  validator: Validator.validate("Judul", [Validator.notEmpty]),
                 ),
                 SizedBox(height: 12),
                 InputLabel(
@@ -116,9 +163,10 @@ class _TaskScreenSheetState extends State<TaskScreenSheet> {
                 ),
                 SizedBox(height: 12),
                 InputLabel(
-                  label: "Link",
+                  label: "Link E-Learning",
                   hintText: "(Opsional) https://learning-if.polibatam.ac.id/",
-                  controller: _linkController,
+                  controller: _learningLink,
+                  validator: Validator.validate("Link", [Validator.url]),
                 ),
                 SizedBox(height: 12),
                 SwitchInput(
@@ -142,11 +190,13 @@ class _TaskScreenSheetState extends State<TaskScreenSheet> {
                   child: FilledButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        context.toast('Menambahkan tugas...');
+                        context.toast(
+                          '${widget.isEdit ? "Menyimpan" : "Menambahkan"} tugas...',
+                        );
                         doSubmit();
                       }
                     },
-                    child: const Text("Tambah"),
+                    child: Text(widget.isEdit ? "Simpan" : "Tambah"),
                   ),
                 ),
               ],

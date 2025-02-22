@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         SizedBox(height: 12),
-        MyTask(limit: 2),
+        MyTask(limit: 2, bottomPadding: 100),
       ],
     );
   }

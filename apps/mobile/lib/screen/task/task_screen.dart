@@ -30,7 +30,7 @@ class _TaskScreenState extends State<TaskScreen> {
 
     return Stack(
       children: [
-        MyTask(limit: 50, topPadding: 24),
+        MyTask(limit: 50, topPadding: 24, bottomPadding: 100),
         Positioned(
           bottom: 100,
           right: 24,
