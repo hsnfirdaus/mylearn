@@ -104,7 +104,10 @@ class _MyTaskState extends State<MyTask> {
             return Padding(
               padding: EdgeInsets.only(top: 12),
               child: ElevatedButton(
-                onPressed: () => {context.push(AppRoute.task)},
+                onPressed: () async {
+                  await context.push(AppRoute.task);
+                  _pagingController.refresh();
+                },
                 child: Text("Lihat Tugas Lainnya"),
               ),
             );
