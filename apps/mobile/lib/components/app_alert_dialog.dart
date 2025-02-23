@@ -48,12 +48,22 @@ Future<bool?> showDeleteDialog({
           actions: <Widget>[
             ElevatedButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Batal'),
+              child: Text(
+                'Batal',
+                style: TextStyle(
+                  fontFamily: DefaultTextStyle.of(context).style.fontFamily,
+                ),
+              ),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
               style: context.appTheme.deleteButton,
-              child: const Text('Hapus'),
+              child: Text(
+                'Hapus',
+                style: TextStyle(
+                  fontFamily: DefaultTextStyle.of(context).style.fontFamily,
+                ),
+              ),
             ),
           ],
         ),

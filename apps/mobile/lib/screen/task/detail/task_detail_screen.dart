@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:mylearn/components/app_alert_dialog.dart';
-import 'package:mylearn/components/bottom_sheet.dart';
 import 'package:mylearn/components/empty.dart';
 import 'package:mylearn/components/show_error.dart';
 import 'package:mylearn/components/tag_icon.dart';
@@ -12,7 +9,6 @@ import 'package:mylearn/components/toast.dart';
 import 'package:mylearn/models/app_bar_provider.dart';
 import 'package:mylearn/models/user_provider.dart';
 import 'package:mylearn/screen/task/detail/task_submission.dart';
-import 'package:mylearn/screen/task/task_screen_sheet.dart';
 import 'package:mylearn/theme/theme_extension.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -46,8 +42,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
   @override
   void dispose() {
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      appBarProvider.resetActions();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      appBarProvider.setCurrentTaskDetail(null, null);
     });
     super.dispose();
   }
@@ -61,61 +57,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     if (task['student']['nim'] == userProvider.student!.nim) {
-      appBarProvider.updateActions([
-        MenuAnchor(
-          menuChildren: [
-            MenuItemButton(
-              child: Text("Edit Tugas"),
-              onPressed: () {
-                showDynamicBottomSheet<void>(
-                  context: context,
-                  useRootNavigator: true,
-                  builder: (BuildContext context) {
-                    return TaskScreenSheet(
-                      isEdit: true,
-                      oldValue: task,
-                      onSuccess: () {
-                        setState(() {});
-                      },
-                    );
-                  },
-                );
-              },
-            ),
-            MenuItemButton(
-              child: Text("Hapus Tugas"),
-              onPressed: () async {
-                final result = await showDeleteDialog(
-                  context: context,
-                  content:
-                      'Tugas ini akan dihapus dan tidak dapat dikembalikan lagi!',
-                );
-                if (result == true) {
-                  final res = await Supabase.instance.client
-                      .from("subject_task")
-                      .delete()
-                      .eq("id", task['id']);
-                  if (res?.error == null) {
-                    onDeleteSuccess();
-                  }
-                }
-              },
-            ),
-          ],
-          builder: (context, controller, child) {
-            return IconButton(
-              onPressed: () {
-                if (controller.isOpen) {
-                  controller.close();
-                } else {
-                  controller.open();
-                }
-              },
-              icon: Icon(LucideIcons.ellipsisVertical),
-            );
-          },
-        ),
-      ]);
+      appBarProvider.setCurrentTaskDetail(task, () {
+        setState(() {});
+      });
     }
   }
 

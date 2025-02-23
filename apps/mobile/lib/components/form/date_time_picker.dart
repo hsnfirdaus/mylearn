@@ -32,6 +32,7 @@ class DateTimePicker extends FormField<DateTime> {
                firstDate: DateTime(DateTime.now().year),
                lastDate: DateTime(DateTime.now().year + 5),
              );
+             FocusManager.instance.primaryFocus?.unfocus();
              if (selectedDate == null) return;
 
              if (!context.mounted) return;
@@ -43,6 +44,7 @@ class DateTimePicker extends FormField<DateTime> {
                        ? TimeOfDay.fromDateTime(state.value!)
                        : TimeOfDay(hour: 0, minute: 0),
              );
+             FocusManager.instance.primaryFocus?.unfocus();
              if (selectedTime == null) return;
 
              final finalDateTime = DateTime(

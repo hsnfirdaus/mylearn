@@ -104,6 +104,8 @@ class DateItem extends StatelessWidget {
                               isActive
                                   ? theme.textLight
                                   : theme.textPlaceholder,
+                          fontFamily:
+                              DefaultTextStyle.of(context).style.fontFamily,
                         ),
                         duration: Duration(milliseconds: 300),
                         child: Text(day),
@@ -114,6 +116,8 @@ class DateItem extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                           color: isActive ? theme.textLight : theme.textPrimary,
+                          fontFamily:
+                              DefaultTextStyle.of(context).style.fontFamily,
                         ),
                         duration: Duration(milliseconds: 300),
                         child: Text(date),

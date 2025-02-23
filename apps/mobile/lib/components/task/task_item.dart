@@ -6,8 +6,14 @@ import 'package:mylearn/helpers/format.dart';
 import 'package:mylearn/theme/theme_extension.dart';
 
 class TaskItem extends StatelessWidget {
-  const TaskItem({super.key, required this.item, this.onPress});
+  const TaskItem({
+    super.key,
+    required this.item,
+    this.onPress,
+    this.isHistory = false,
+  });
 
+  final bool isHistory;
   final Map<String, dynamic> item;
   final void Function()? onPress;
 
@@ -43,19 +49,26 @@ class TaskItem extends StatelessWidget {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      if (item['deadline'] != null)
+                      if (item['deadline'] != null && !isHistory)
                         TagIcon(
                           icon: LucideIcons.target,
                           text: countDown(item['deadline']),
+                        ),
+                      if (isHistory && item['updated_at'] != null)
+                        TagIcon(
+                          icon: LucideIcons.calendar,
+                          text:
+                              "${countDown(item['updated_at'], isReverse: true)} yang lalu",
                         ),
                       TagIcon(
                         icon: LucideIcons.bookType,
                         text: item['subject_code'],
                       ),
-                      TagIcon(
-                        icon: LucideIcons.bookmark,
-                        text: taskStatus(item['status']),
-                      ),
+                      if (!isHistory)
+                        TagIcon(
+                          icon: LucideIcons.bookmark,
+                          text: taskStatus(item['status']),
+                        ),
                     ],
                   ),
                 ],

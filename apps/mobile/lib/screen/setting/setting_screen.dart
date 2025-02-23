@@ -33,12 +33,24 @@ class SettingScreen extends StatelessWidget {
                     actions: <Widget>[
                       ElevatedButton(
                         onPressed: () => Navigator.pop(context, false),
-                        child: const Text('Batal'),
+                        child: Text(
+                          'Batal',
+                          style: TextStyle(
+                            fontFamily:
+                                DefaultTextStyle.of(context).style.fontFamily,
+                          ),
+                        ),
                       ),
                       FilledButton(
                         onPressed: () => Navigator.pop(context, true),
                         style: theme.deleteButton,
-                        child: const Text('Keluar'),
+                        child: Text(
+                          'Keluar',
+                          style: TextStyle(
+                            fontFamily:
+                                DefaultTextStyle.of(context).style.fontFamily,
+                          ),
+                        ),
                       ),
                     ],
                   ),

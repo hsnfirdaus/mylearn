@@ -150,6 +150,7 @@ class AppThemeData {
     // App Bar
     final appBarTheme = AppBarTheme(
       backgroundColor: primary,
+      scrolledUnderElevation: 0,
       titleTextStyle: TextStyle(
         color: textLight,
         fontWeight: FontWeight.bold,
@@ -162,8 +163,11 @@ class AppThemeData {
     // Dialog
     final dialogTheme = DialogTheme(
       backgroundColor: background,
-      titleTextStyle: heading3.copyWith(fontWeight: FontWeight.bold),
-      contentTextStyle: bodyText,
+      titleTextStyle: heading3.copyWith(
+        fontWeight: FontWeight.bold,
+        fontFamily: "Lato",
+      ),
+      contentTextStyle: bodyText.copyWith(fontFamily: "Lato"),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     );
 
@@ -256,7 +260,9 @@ class AppThemeData {
     );
     final menuButtonTheme = MenuButtonThemeData(
       style: ButtonStyle(
-        padding: WidgetStatePropertyAll(EdgeInsets.all(24)),
+        padding: WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        ),
         textStyle: WidgetStatePropertyAll(
           TextStyle(fontWeight: FontWeight.bold),
         ),

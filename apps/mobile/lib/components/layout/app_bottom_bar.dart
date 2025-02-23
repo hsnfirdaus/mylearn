@@ -42,7 +42,7 @@ class AppBottomBar extends StatelessWidget {
 
     void navigate(String path) {
       if (activeItem == AppRoute.home) {
-        context.push(path);
+        context.pushReplacement(path);
       } else {
         context.replace(path);
       }

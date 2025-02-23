@@ -7,31 +7,20 @@ import 'package:mylearn/components/task/task_item.dart';
 import 'package:mylearn/router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class MyTask extends StatefulWidget {
-  final bool? isHome;
-  final double? topPadding;
-  final double? bottomPadding;
-  final PagingController<int, Map<String, dynamic>>? pagingController;
-  const MyTask({
-    super.key,
-    this.isHome,
-    this.topPadding,
-    this.bottomPadding,
-    this.pagingController,
-  });
+class MyTaskHistory extends StatefulWidget {
+  const MyTaskHistory({super.key});
 
   @override
-  State<MyTask> createState() => _MyTaskState();
+  State<MyTaskHistory> createState() => _MyTaskHistoryState();
 }
 
-class _MyTaskState extends State<MyTask> {
-  late PagingController<int, Map<String, dynamic>> _pagingController;
+class _MyTaskHistoryState extends State<MyTaskHistory> {
+  final PagingController<int, Map<String, dynamic>> _pagingController =
+      PagingController(firstPageKey: 0);
 
   @override
   void initState() {
     super.initState();
-    _pagingController =
-        widget.pagingController ?? PagingController(firstPageKey: 0);
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
@@ -39,17 +28,36 @@ class _MyTaskState extends State<MyTask> {
 
   Future<void> _fetchPage(int offset) async {
     try {
-      final pageSize = widget.isHome == true ? 5 : 20;
+      final pageSize = 20;
       final end = offset + pageSize - 1;
       final res = await Supabase.instance.client
-          .from("not_submitted_task")
-          .select("*")
+          .from("subject_task_student")
+          .select(
+            "id, status, updated_at, subject_task(id, title, semester_id, subject_id, student_nim, deadline, created_at, subject(name, code))",
+          )
+          .inFilter("status", ['submitted'])
           .range(offset, end)
+          .order('updated_at', ascending: false)
           .count(CountOption.exact);
-      final data = res.data;
+      final List<Map<String, dynamic>> data =
+          res.data.map((item) {
+            return {
+              "id": item['subject_task']['id'],
+              "title": item['subject_task']['title'],
+              "semester_id": item['subject_task']['semester_id'],
+              "subject_id": item['subject_task']['subject_id'],
+              "student_nim": item['subject_task']['student_nim'],
+              "deadline": item['subject_task']['deadline'],
+              "created_at": item['subject_task']['created_at'],
+              "subject_name": item['subject_task']['subject']['name'],
+              "subject_code": item['subject_task']['subject']['code'],
+              "status": item['status'],
+              "updated_at": item['updated_at'],
+            };
+          }).toList();
       final int count = res.count;
 
-      final isLastPage = widget.isHome == true || count <= end;
+      final isLastPage = count <= end;
       if (isLastPage) {
         _pagingController.appendLastPage(data);
       } else {
@@ -63,9 +71,7 @@ class _MyTaskState extends State<MyTask> {
 
   @override
   void dispose() {
-    if (widget.pagingController == null) {
-      _pagingController.dispose();
-    }
+    _pagingController.dispose();
     super.dispose();
   }
 
@@ -77,13 +83,7 @@ class _MyTaskState extends State<MyTask> {
   @override
   Widget build(BuildContext context) {
     return PagedListView<int, Map<String, dynamic>>(
-      shrinkWrap: widget.isHome == true,
-      padding: EdgeInsets.only(
-        top: widget.topPadding ?? 0,
-        bottom: widget.bottomPadding ?? 0,
-        left: 24,
-        right: 24,
-      ),
+      padding: EdgeInsets.all(24),
       pagingController: _pagingController,
       builderDelegate: PagedChildBuilderDelegate<Map<String, dynamic>>(
         noItemsFoundIndicatorBuilder: (context) {
@@ -94,23 +94,12 @@ class _MyTaskState extends State<MyTask> {
         },
         itemBuilder:
             (context, item, index) => TaskItem(
+              isHistory: true,
               item: item,
               onPress: () {
                 onDetail(item['id']);
               },
             ),
-        noMoreItemsIndicatorBuilder: (context) {
-          if (widget.isHome == true) {
-            return Padding(
-              padding: EdgeInsets.only(top: 12),
-              child: ElevatedButton(
-                onPressed: () => {context.push(AppRoute.task)},
-                child: Text("Lihat Tugas Lainnya"),
-              ),
-            );
-          }
-          return SizedBox();
-        },
       ),
     );
   }

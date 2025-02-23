@@ -8,6 +8,7 @@ import 'package:mylearn/screen/schedule/schedule_screen.dart';
 import 'package:mylearn/screen/setting/setting_screen.dart';
 import 'package:mylearn/screen/setting/subject/setting_subject_screen.dart';
 import 'package:mylearn/screen/task/detail/task_detail_screen.dart';
+import 'package:mylearn/screen/task/history/task_history_screen.dart';
 import 'package:mylearn/screen/task/task_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -18,6 +19,8 @@ class AppRoute {
   static const task = "/task";
   static String taskDetail({String subjectTaskId = ':subjectTaskId'}) =>
       '/task/detail/$subjectTaskId';
+  static const taskDetailRoute = "/task/detail/:subjectTaskId";
+  static const taskHistory = "/task/history";
   static const schedule = "/schedule";
   static const setting = "/setting";
   static const settingSubject = "/setting/subject";
@@ -53,6 +56,16 @@ class AppRouter {
             path: AppRoute.task,
             name: "Task",
             builder: (context, state) => TaskScreen(),
+          ),
+          GoRoute(
+            path: AppRoute.taskHistory,
+            name: "TaskHistory",
+            pageBuilder: (context, state) {
+              return PageSlideTransition(
+                key: state.pageKey,
+                child: TaskHistoryScreen(),
+              );
+            },
           ),
           GoRoute(
             path: AppRoute.taskDetail(),

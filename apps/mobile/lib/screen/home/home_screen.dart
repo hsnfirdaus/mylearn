@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mylearn/components/task/my_task.dart';
 import 'package:mylearn/components/schedule/schedule_list.dart';
+import 'package:mylearn/components/task/my_task.dart';
 import 'package:mylearn/theme/theme_extension.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         SizedBox(height: 12),
-        MyTask(limit: 2, bottomPadding: 100),
+        MyTask(isHome: true, bottomPadding: 100),
       ],
     );
   }

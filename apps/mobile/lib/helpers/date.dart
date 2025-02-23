@@ -1,11 +1,12 @@
-String countDown(String dateString) {
+String countDown(String dateString, {bool isReverse = false}) {
   final targetDate = DateTime.parse(dateString);
   final now = DateTime.now();
-  final difference = targetDate.difference(now);
+  final difference =
+      isReverse ? now.difference(targetDate) : targetDate.difference(now);
 
   String countdownText;
   if (difference.isNegative) {
-    countdownText = "Terlambat";
+    countdownText = isReverse ? "Invalid" : "Terlambat";
   } else if (difference.inDays > 7) {
     countdownText = "${(difference.inDays / 7).floor()} Minggu";
   } else if (difference.inDays > 0) {

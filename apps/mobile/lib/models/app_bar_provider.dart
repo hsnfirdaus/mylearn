@@ -1,24 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class AppBarProvider extends ChangeNotifier {
-  List<Widget> _actions = [];
-  List<Widget> get actions =>
-      _actions.isNotEmpty ? [..._actions, const SizedBox(width: 12)] : [];
+  Map<String, dynamic>? _taskDetail;
+  void Function()? _taskDetailRefresh;
+  Map<String, dynamic>? get taskDetail => _taskDetail;
+  void Function()? get taskDetailRefresh => _taskDetailRefresh;
 
-  void updateActions(List<Widget> newActions) {
-    _actions = newActions;
+  void setCurrentTaskDetail(
+    Map<String, dynamic>? newDetail,
+    void Function()? newRefresh,
+  ) {
+    _taskDetail = newDetail;
+    _taskDetailRefresh = newRefresh;
     notifyListeners();
-  }
-
-  void resetActions() {
-    _actions = [];
-    notifyListeners();
-  }
-}
-
-extension AppBarContextExtension on BuildContext {
-  AppBarProvider get appBarProvider {
-    return Provider.of<AppBarProvider>(this, listen: false);
   }
 }
